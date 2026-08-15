@@ -2,7 +2,7 @@
 name: Implementation Issue
 about: 実装作業用Issue
 title: "[Implementation] "
-labels: implementation, mvp
+labels: implementation, initial-release
 assignees: ""
 ---
 
