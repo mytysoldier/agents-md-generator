@@ -2,6 +2,24 @@
 
 AIエージェントを中心に、GitHub Issueでタスクを管理しながら個人開発を進めるためのテンプレートです。
 
+## ローカル開発
+
+必要環境: Node.js 24 以降
+
+```bash
+npm install
+npm run dev
+```
+
+### 検証コマンド
+
+```bash
+npm run lint
+npm run typecheck
+npm test
+npm run build
+```
+
 このテンプレートは、以下のような進め方を前提にしています。
 
 - まず企画・要件・技術設計をIssueで整理する
