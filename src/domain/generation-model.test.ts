@@ -10,12 +10,22 @@ describe('normalizeMinimumInput', () => {
     })
   })
 
-  it('falls back safely for malformed values and limits optional lists', () => {
+  it('falls back safely for malformed values without truncating optional lists', () => {
     const technologies = Array.from({ length: 21 }, (_, index) => ` tech-${index} `)
 
     expect(normalizeMinimumInput({ projectSummary: 42, technologyStack: technologies, additionalConstraints: 'not a list' })).toEqual({
       projectSummary: '',
-      technologyStack: technologies.slice(0, 20).map((item) => item.trim()),
+      technologyStack: technologies.map((item) => item.trim()),
+      additionalConstraints: [],
+    })
+  })
+
+  it('keeps valid input without applying character limits', () => {
+    const summary = '概要'.repeat(600)
+
+    expect(normalizeMinimumInput({ projectSummary: summary })).toEqual({
+      projectSummary: summary,
+      technologyStack: [],
       additionalConstraints: [],
     })
   })

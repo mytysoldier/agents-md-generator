@@ -43,27 +43,21 @@ export type GeneratedDraft = DraftContents & { kind: 'generated' }
 /** The only document shape accepted as the source of the final Markdown. */
 export type EditedDraft = DraftContents & { kind: 'edited' }
 
-const MAX_TEXT_LENGTH = 2_000
-const MAX_SUMMARY_LENGTH = 1_000
-const MAX_TECHNOLOGIES = 20
-const MAX_CONSTRAINTS = 10
-const MAX_COMMANDS = 10
-
 type UnknownRecord = Record<string, unknown>
 
 function isRecord(value: unknown): value is UnknownRecord {
   return typeof value === 'object' && value !== null && !Array.isArray(value)
 }
 
-function normalizeSingleLine(value: unknown, maximumLength = MAX_TEXT_LENGTH): string {
+function normalizeSingleLine(value: unknown): string {
   if (typeof value !== 'string' || /[\r\n]/.test(value)) {
     return ''
   }
 
-  return value.trim().slice(0, maximumLength)
+  return value.trim()
 }
 
-function normalizeMultiline(value: unknown, maximumLength = MAX_TEXT_LENGTH): string {
+function normalizeMultiline(value: unknown): string {
   if (typeof value !== 'string') {
     return ''
   }
@@ -74,10 +68,9 @@ function normalizeMultiline(value: unknown, maximumLength = MAX_TEXT_LENGTH): st
     .map((line) => line.trim())
     .join('\n')
     .trim()
-    .slice(0, maximumLength)
 }
 
-function normalizeStringList(value: unknown, maximumItems: number): string[] {
+function normalizeStringList(value: unknown): string[] {
   if (!Array.isArray(value)) {
     return []
   }
@@ -85,7 +78,6 @@ function normalizeStringList(value: unknown, maximumItems: number): string[] {
   return value
     .map((item) => normalizeSingleLine(item))
     .filter((item) => item.length > 0)
-    .slice(0, maximumItems)
 }
 
 function normalizeCommand(value: unknown): ProjectCommand | null {
@@ -108,7 +100,7 @@ function normalizeRuleGroup(value: unknown): RuleGroup | null {
 
   return {
     category: value.category as RuleCategory,
-    rules: normalizeStringList(value.rules, MAX_TEXT_LENGTH),
+    rules: normalizeStringList(value.rules),
   }
 }
 
@@ -119,9 +111,9 @@ export function normalizeMinimumInput(value: unknown): MinimumInput {
   }
 
   return {
-    projectSummary: normalizeMultiline(value.projectSummary, MAX_SUMMARY_LENGTH),
-    technologyStack: normalizeStringList(value.technologyStack, MAX_TECHNOLOGIES),
-    additionalConstraints: normalizeStringList(value.additionalConstraints, MAX_CONSTRAINTS),
+    projectSummary: normalizeMultiline(value.projectSummary),
+    technologyStack: normalizeStringList(value.technologyStack),
+    additionalConstraints: normalizeStringList(value.additionalConstraints),
   }
 }
 
@@ -132,7 +124,7 @@ export function normalizeEditedDraft(value: unknown): EditedDraft {
   }
 
   const commands = Array.isArray(value.commands)
-    ? value.commands.map(normalizeCommand).filter((command): command is ProjectCommand => command !== null).slice(0, MAX_COMMANDS)
+    ? value.commands.map(normalizeCommand).filter((command): command is ProjectCommand => command !== null)
     : []
   const commonRuleGroups = Array.isArray(value.commonRuleGroups)
     ? value.commonRuleGroups.map(normalizeRuleGroup).filter((group): group is RuleGroup => group !== null)
@@ -141,12 +133,12 @@ export function normalizeEditedDraft(value: unknown): EditedDraft {
   return {
     kind: 'edited',
     title: normalizeSingleLine(value.title),
-    projectSummary: normalizeMultiline(value.projectSummary, MAX_SUMMARY_LENGTH),
-    technologyStack: normalizeStringList(value.technologyStack, MAX_TECHNOLOGIES),
+    projectSummary: normalizeMultiline(value.projectSummary),
+    technologyStack: normalizeStringList(value.technologyStack),
     commands,
-    additionalConstraints: normalizeStringList(value.additionalConstraints, MAX_CONSTRAINTS),
+    additionalConstraints: normalizeStringList(value.additionalConstraints),
     commonRuleGroups,
-    technologySpecificRules: normalizeStringList(value.technologySpecificRules, MAX_TEXT_LENGTH),
+    technologySpecificRules: normalizeStringList(value.technologySpecificRules),
   }
 }
 
