@@ -17,7 +17,7 @@ describe('最小入力の正規化', () => {
     })
   })
 
-  it('不正な値を安全な空値へフォールバックし、有効な任意項目を切り詰めない', () => {
+  it('不正な値を空値として扱い、有効な任意項目を切り詰めない', () => {
     // Arrange
     const technologies = Array.from({ length: 21 }, (_, index) => ` tech-${index} `)
     const input = { projectSummary: 42, technologyStack: technologies, additionalConstraints: 'not a list' }
@@ -107,7 +107,7 @@ describe('編集済みたたき台の正規化', () => {
     expect(invalidTitleResult.title).toBe('AGENTS.md')
   })
 
-  it('オブジェクトではない外部値を空のたたき台へフォールバックする', () => {
+  it('オブジェクトではない外部値を空のたたき台として扱う', () => {
     // Arrange
     const input = ['not', 'a', 'draft']
 
