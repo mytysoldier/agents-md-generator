@@ -72,7 +72,7 @@ describe('編集済みたたき台の正規化', () => {
     })
   })
 
-  it('不正な値を例外なく除外する', () => {
+  it('不正な値を除外する', () => {
     // Arrange
     const input = {
       title: 'two\nlines',
