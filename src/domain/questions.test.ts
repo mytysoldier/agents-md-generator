@@ -32,25 +32,25 @@ describe('question data model', () => {
     expect(normalizeList(['  TypeScript ', '', 'React', 'TypeScript', 1])).toEqual(['TypeScript', 'React'])
   })
 
-  it('rejects malformed commands and safely falls back for malformed answer data', () => {
+  it('accepts commands only, rejects malformed commands, and safely falls back for malformed answer data', () => {
     expect(normalizeCommandList([
-      { label: ' test ', command: ' pnpm test ' },
-      { command: 'npm\ntest' },
-      { command: 'pnpm test', label: 'test' },
-      { command: '' },
-    ])).toEqual([{ label: 'test', command: 'pnpm test' }])
+      ' pnpm test ',
+      'npm\ntest',
+      'pnpm test',
+      '',
+    ])).toEqual(['pnpm test'])
 
     expect(normalizeAnswers({
       'project.name': 42,
       'project.summary': ['invalid'],
       'technology.stack': 'React',
-      'commands.project': [{ command: 'pnpm build' }],
+      'commands.project': ['pnpm build'],
       'project.constraints': [null, '  本番データを使わない  '],
     })).toEqual({
       'project.name': '',
       'project.summary': '',
       'technology.stack': [],
-      'commands.project': [{ command: 'pnpm build' }],
+      'commands.project': ['pnpm build'],
       'project.constraints': ['本番データを使わない'],
     })
   })

@@ -9,16 +9,11 @@ export const questionIds = [
 export type QuestionId = (typeof questionIds)[number]
 export type QuestionInputKind = 'text' | 'textarea' | 'list' | 'command-list'
 
-export type ProjectCommand = {
-  label?: string
-  command: string
-}
-
 export type Answers = {
   'project.name': string
   'project.summary': string
   'technology.stack': string[]
-  'commands.project': ProjectCommand[]
+  'commands.project': string[]
   'project.constraints': string[]
 }
 
@@ -83,7 +78,7 @@ export const questions: readonly QuestionDefinition[] = [
     id: 'commands.project',
     kind: 'command-list',
     label: 'プロジェクトで使うコマンド',
-    description: 'install、dev、lint、test、buildなど、使用してよいコマンドを1行ずつ入力する。用途ラベルは任意。',
+    description: 'install、dev、lint、test、buildなど、使用してよいコマンドを1行ずつ入力する。用途はAGENTS.mdの生成時に補う。',
     required: true,
     maxItems: 10,
     initialValue: [],
@@ -135,19 +130,10 @@ export function normalizeList(value: unknown): string[] {
   return unique(value.map(normalizeText).filter(Boolean))
 }
 
-export function normalizeCommandList(value: unknown): ProjectCommand[] {
+export function normalizeCommandList(value: unknown): string[] {
   if (!Array.isArray(value)) return []
 
-  const commands = value.flatMap((item) => {
-    if (!isRecord(item)) return []
-    const command = normalizeCommand(item.command)
-    if (!command) return []
-
-    const label = normalizeText(item.label)
-    return [label ? { label, command } : { command }]
-  })
-
-  return commands.filter((item, index) => commands.findIndex((candidate) => candidate.command === item.command && candidate.label === item.label) === index)
+  return unique(value.map(normalizeCommand).filter(Boolean))
 }
 
 function normalizeCommand(value: unknown): string {
