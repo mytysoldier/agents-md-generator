@@ -1,49 +1,81 @@
 import { describe, expect, it } from 'vitest'
 import { emptyEditedDraft, normalizeEditedDraft, normalizeMinimumInput } from './model'
 
-describe('normalizeMinimumInput', () => {
-  it('keeps the required summary while treating the other form fields as optional', () => {
-    expect(normalizeMinimumInput({ projectSummary: '  在庫を管理する\r\nWebアプリ  ' })).toEqual({
+describe('最小入力の正規化', () => {
+  it('必須の概要を保持し、任意項目を空配列として扱う', () => {
+    // Arrange
+    const input = { projectSummary: '  在庫を管理する\r\nWebアプリ  ' }
+
+    // Act
+    const result = normalizeMinimumInput(input)
+
+    // Assert
+    expect(result).toEqual({
       projectSummary: '在庫を管理する\nWebアプリ',
       technologyStack: [],
       additionalConstraints: [],
     })
   })
 
-  it('falls back safely for malformed values without truncating optional lists', () => {
+  it('不正な値を安全な空値へフォールバックし、有効な任意項目を切り詰めない', () => {
+    // Arrange
     const technologies = Array.from({ length: 21 }, (_, index) => ` tech-${index} `)
+    const input = { projectSummary: 42, technologyStack: technologies, additionalConstraints: 'not a list' }
 
-    expect(normalizeMinimumInput({ projectSummary: 42, technologyStack: technologies, additionalConstraints: 'not a list' })).toEqual({
+    // Act
+    const result = normalizeMinimumInput(input)
+
+    // Assert
+    expect(result).toEqual({
       projectSummary: '',
       technologyStack: technologies.map((item) => item.trim()),
       additionalConstraints: [],
     })
   })
 
-  it('keeps valid input without applying character limits', () => {
+  it('有効な長い概要を文字数で切り詰めない', () => {
+    // Arrange
     const summary = '概要'.repeat(600)
 
-    expect(normalizeMinimumInput({ projectSummary: summary })).toEqual({
+    // Act
+    const result = normalizeMinimumInput({ projectSummary: summary })
+
+    // Assert
+    expect(result).toEqual({
       projectSummary: summary,
       technologyStack: [],
       additionalConstraints: [],
     })
   })
 
-  it('removes only half-width spaces and tabs from summary line boundaries', () => {
-    expect(normalizeMinimumInput({ projectSummary: ' \t\u3000概要\u3000\t \n\t次の行 ' }).projectSummary).toBe('　概要　\n次の行')
+  it('概要の行末から半角空白とタブだけを除去する', () => {
+    // Arrange
+    const input = { projectSummary: ' \t\u3000概要\u3000\t \n\t次の行 ' }
+
+    // Act
+    const result = normalizeMinimumInput(input)
+
+    // Assert
+    expect(result.projectSummary).toBe('　概要　\n次の行')
   })
 })
 
-describe('normalizeEditedDraft', () => {
-  it('preserves editable command labels and rule groups', () => {
-    expect(normalizeEditedDraft({
+describe('編集済みたたき台の正規化', () => {
+  it('編集可能なコマンド用途ラベルとルールグループを保持する', () => {
+    // Arrange
+    const input = {
       title: ' AGENTS.md ',
       projectSummary: '概要',
       commands: [{ command: ' pnpm test ', label: ' テスト ' }],
       commonRuleGroups: [{ category: 'quality', rules: [' テストを実行する '] }],
       technologySpecificRules: [' strict を維持する '],
-    })).toEqual({
+    }
+
+    // Act
+    const result = normalizeEditedDraft(input)
+
+    // Assert
+    expect(result).toEqual({
       kind: 'edited',
       title: 'AGENTS.md',
       projectSummary: '概要',
@@ -55,26 +87,49 @@ describe('normalizeEditedDraft', () => {
     })
   })
 
-  it('removes malformed values instead of throwing', () => {
-    expect(normalizeEditedDraft({
+  it('不正な値を例外なく除外する', () => {
+    // Arrange
+    const input = {
       title: 'two\nlines',
       projectSummary: null,
       commands: [{ command: 'valid' }, { command: 'bad\ncommand' }, 'bad'],
       commonRuleGroups: [{ category: 'unknown', rules: ['ignored'] }, { category: 'git', rules: [null, ' keep '] }],
       technologySpecificRules: ['\n', 3],
-    })).toEqual({
+    }
+
+    // Act
+    const result = normalizeEditedDraft(input)
+
+    // Assert
+    expect(result).toEqual({
       ...emptyEditedDraft(),
       commands: [{ command: 'valid', label: '' }],
       commonRuleGroups: [{ category: 'git', rules: ['keep'] }],
     })
   })
 
-  it('defaults an empty or invalid title to AGENTS.md', () => {
-    expect(normalizeEditedDraft({ title: '   ' }).title).toBe('AGENTS.md')
-    expect(normalizeEditedDraft({ title: 'invalid\ntitle' }).title).toBe('AGENTS.md')
+  it('空または不正なタイトルをAGENTS.mdへ補完する', () => {
+    // Arrange
+    const emptyTitle = { title: '   ' }
+    const invalidTitle = { title: 'invalid\ntitle' }
+
+    // Act
+    const emptyTitleResult = normalizeEditedDraft(emptyTitle)
+    const invalidTitleResult = normalizeEditedDraft(invalidTitle)
+
+    // Assert
+    expect(emptyTitleResult.title).toBe('AGENTS.md')
+    expect(invalidTitleResult.title).toBe('AGENTS.md')
   })
 
-  it('returns an empty draft for non-object external values', () => {
-    expect(normalizeEditedDraft(['not', 'a', 'draft'])).toEqual(emptyEditedDraft())
+  it('オブジェクトではない外部値を空のたたき台へフォールバックする', () => {
+    // Arrange
+    const input = ['not', 'a', 'draft']
+
+    // Act
+    const result = normalizeEditedDraft(input)
+
+    // Assert
+    expect(result).toEqual(emptyEditedDraft())
   })
 })
