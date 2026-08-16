@@ -4,7 +4,7 @@ AIエージェントを中心に、GitHub Issueでタスクを管理しながら
 
 ## ローカル開発
 
-必要環境: Node.js 24 以降、pnpm 11.22.0
+必要環境: Node.js 24系、pnpm 11.22.0
 
 pnpmはCorepackで有効化できます。
 
