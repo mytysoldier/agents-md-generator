@@ -4,20 +4,23 @@ AIエージェントを中心に、GitHub Issueでタスクを管理しながら
 
 ## ローカル開発
 
-必要環境: Node.js 24 以降
+必要環境: Node.js 24 以降、pnpm 11.22.0
+
+pnpmはCorepackで有効化できます。
 
 ```bash
-npm install
-npm run dev
+corepack enable
+pnpm install
+pnpm dev
 ```
 
 ### 検証コマンド
 
 ```bash
-npm run lint
-npm run typecheck
-npm test
-npm run build
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
 ```
 
 このテンプレートは、以下のような進め方を前提にしています。
