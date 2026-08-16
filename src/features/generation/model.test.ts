@@ -107,7 +107,7 @@ describe('編集済みたたき台の正規化', () => {
     expect(invalidTitleResult.title).toBe('AGENTS.md')
   })
 
-  it('オブジェクトではない外部値を空のたたき台として扱う', () => {
+  it('たたき台の形式ではない入力を空のたたき台として扱う', () => {
     // Arrange
     const input = ['not', 'a', 'draft']
 
