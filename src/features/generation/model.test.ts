@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { emptyEditedDraft, normalizeEditedDraft, normalizeMinimumInput } from './generation-model'
+import { emptyEditedDraft, normalizeEditedDraft, normalizeMinimumInput } from './model'
 
 describe('normalizeMinimumInput', () => {
   it('keeps the required summary while treating the other form fields as optional', () => {

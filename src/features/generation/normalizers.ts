@@ -1,4 +1,4 @@
-import type { EditedDraft, MinimumInput, ProjectCommand, RuleCategory, RuleGroup } from './generation-model'
+import type { EditedDraft, MinimumInput, ProjectCommand, RuleCategory, RuleGroup } from './model'
 
 type UnknownRecord = Record<string, unknown>
 
