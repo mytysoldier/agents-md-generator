@@ -2,6 +2,27 @@
 
 AIエージェントを中心に、GitHub Issueでタスクを管理しながら個人開発を進めるためのテンプレートです。
 
+## ローカル開発
+
+必要環境: Node.js 24系、pnpm 11.22.0
+
+pnpmはCorepackで有効化できます。
+
+```bash
+corepack enable
+pnpm install
+pnpm dev
+```
+
+### 検証コマンド
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
+```
+
 このテンプレートは、以下のような進め方を前提にしています。
 
 - まず企画・要件・技術設計をIssueで整理する

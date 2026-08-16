@@ -1,1 +1,7 @@
 docs/.local/
+node_modules/
+package-lock.json
+dist/
+coverage/
+*.tsbuildinfo
+.DS_Store
