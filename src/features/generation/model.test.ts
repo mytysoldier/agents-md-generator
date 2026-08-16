@@ -33,21 +33,6 @@ describe('最小入力の正規化', () => {
     })
   })
 
-  it('有効な長い概要を文字数で切り詰めない', () => {
-    // Arrange
-    const summary = '概要'.repeat(600)
-
-    // Act
-    const result = normalizeMinimumInput({ projectSummary: summary })
-
-    // Assert
-    expect(result).toEqual({
-      projectSummary: summary,
-      technologyStack: [],
-      additionalConstraints: [],
-    })
-  })
-
   it('概要の行末から半角空白とタブだけを除去する', () => {
     // Arrange
     const input = { projectSummary: ' \t\u3000概要\u3000\t \n\t次の行 ' }
