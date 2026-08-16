@@ -1,4 +1,4 @@
-export const RULE_CATEGORIES = [
+export const REQUIRED_RULE_CATEGORIES = [
   'implementation',
   'quality',
   'git',
@@ -6,7 +6,7 @@ export const RULE_CATEGORIES = [
   'safety',
 ] as const
 
-export type RuleCategory = (typeof RULE_CATEGORIES)[number]
+export type RuleCategory = (typeof REQUIRED_RULE_CATEGORIES)[number]
 
 export interface MinimumInput {
   projectSummary: string
@@ -102,7 +102,7 @@ function normalizeCommand(value: unknown): ProjectCommand | null {
 }
 
 function normalizeRuleGroup(value: unknown): RuleGroup | null {
-  if (!isRecord(value) || !RULE_CATEGORIES.includes(value.category as RuleCategory)) {
+  if (!isRecord(value) || !REQUIRED_RULE_CATEGORIES.includes(value.category as RuleCategory)) {
     return null
   }
 
