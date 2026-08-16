@@ -1,10 +1,15 @@
 import { render, screen } from '@testing-library/react'
 import App from './App'
 
-describe('App', () => {
-  it('renders the application title', () => {
+describe('アプリケーション', () => {
+  it('アプリケーションタイトルを表示する', () => {
+    // Arrange
+    const title = 'プロジェクト用のAGENTS.mdを、迷わず作る。'
+
+    // Act
     render(<App />)
 
-    expect(screen.getByRole('heading', { level: 1, name: 'プロジェクト用のAGENTS.mdを、迷わず作る。' })).toBeInTheDocument()
+    // Assert
+    expect(screen.getByRole('heading', { level: 1, name: title })).toBeInTheDocument()
   })
 })
