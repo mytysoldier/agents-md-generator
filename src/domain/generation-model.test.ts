@@ -29,6 +29,10 @@ describe('normalizeMinimumInput', () => {
       additionalConstraints: [],
     })
   })
+
+  it('removes only half-width spaces and tabs from summary line boundaries', () => {
+    expect(normalizeMinimumInput({ projectSummary: ' \t\u3000概要\u3000\t \n\t次の行 ' }).projectSummary).toBe('　概要　\n次の行')
+  })
 })
 
 describe('normalizeEditedDraft', () => {
@@ -63,6 +67,11 @@ describe('normalizeEditedDraft', () => {
       commands: [{ command: 'valid', label: '' }],
       commonRuleGroups: [{ category: 'git', rules: ['keep'] }],
     })
+  })
+
+  it('defaults an empty or invalid title to AGENTS.md', () => {
+    expect(normalizeEditedDraft({ title: '   ' }).title).toBe('AGENTS.md')
+    expect(normalizeEditedDraft({ title: 'invalid\ntitle' }).title).toBe('AGENTS.md')
   })
 
   it('returns an empty draft for non-object external values', () => {

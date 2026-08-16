@@ -6,6 +6,8 @@ export const REQUIRED_RULE_CATEGORIES = [
   'safety',
 ] as const
 
+export const DEFAULT_DOCUMENT_TITLE = 'AGENTS.md'
+
 export type RuleCategory = (typeof REQUIRED_RULE_CATEGORIES)[number]
 
 export interface MinimumInput {
@@ -57,6 +59,10 @@ function normalizeSingleLine(value: unknown): string {
   return value.trim()
 }
 
+function normalizeTitle(value: unknown): string {
+  return normalizeSingleLine(value) || DEFAULT_DOCUMENT_TITLE
+}
+
 function normalizeMultiline(value: unknown): string {
   if (typeof value !== 'string') {
     return ''
@@ -65,9 +71,9 @@ function normalizeMultiline(value: unknown): string {
   return value
     .replace(/\r\n?/g, '\n')
     .split('\n')
-    .map((line) => line.trim())
+    .map((line) => line.replace(/^[ \t]+|[ \t]+$/g, ''))
     .join('\n')
-    .trim()
+    .replace(/^\n+|\n+$/g, '')
 }
 
 function normalizeStringList(value: unknown): string[] {
@@ -132,7 +138,7 @@ export function normalizeEditedDraft(value: unknown): EditedDraft {
 
   return {
     kind: 'edited',
-    title: normalizeSingleLine(value.title),
+    title: normalizeTitle(value.title),
     projectSummary: normalizeMultiline(value.projectSummary),
     technologyStack: normalizeStringList(value.technologyStack),
     commands,
@@ -145,7 +151,7 @@ export function normalizeEditedDraft(value: unknown): EditedDraft {
 export function emptyEditedDraft(): EditedDraft {
   return {
     kind: 'edited',
-    title: '',
+    title: DEFAULT_DOCUMENT_TITLE,
     projectSummary: '',
     technologyStack: [],
     commands: [],
