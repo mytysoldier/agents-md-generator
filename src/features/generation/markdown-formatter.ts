@@ -16,8 +16,18 @@ function rulesForCategory(draft: EditedDraft, category: RuleCategory): string[] 
   return category === 'safety' ? [...rules, ...draft.additionalConstraints] : rules
 }
 
+function assertRequiredRuleGroups(draft: EditedDraft): void {
+  for (const category of REQUIRED_RULE_CATEGORIES) {
+    const rules = draft.commonRuleGroups.find((group) => group.category === category)?.rules ?? []
+    if (rules.length === 0) {
+      throw new Error(`必須ルールカテゴリ「${SECTION_TITLES[category]}」には1件以上のルールが必要です。`)
+    }
+  }
+}
+
 export function formatAgentsMarkdown(value: unknown): string {
   const draft = normalizeEditedDraft(value)
+  assertRequiredRuleGroups(draft)
   const sections = [`# ${escapeMarkdown(draft.title)}`, INTRODUCTION, `## プロジェクトの目的\n\n${escapeMarkdown(draft.projectSummary)}`]
   if (draft.technologyStack.length > 0) sections.push(`## 技術スタック\n\n${formatList(draft.technologyStack)}`)
   if (draft.commands.length > 0) sections.push(`## プロジェクトコマンド\n\n${draft.commands.map(formatCommand).join('\n')}`)

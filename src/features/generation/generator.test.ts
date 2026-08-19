@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest'
 import { createGeneratedDraft, formatAgentsMarkdown, suggestCommandLabel } from './generator'
 
+function requiredRuleGroups() {
+  return [
+    { category: 'implementation', rules: ['実装する'] },
+    { category: 'quality', rules: ['確認する'] },
+    { category: 'git', rules: ['記録する'] },
+    { category: 'agentWorkflow', rules: ['報告する'] },
+    { category: 'safety', rules: ['秘密を出さない'] },
+  ]
+}
+
 describe('たたき台の作成', () => {
   it('固定ルールと一致した技術固有ルールだけをたたき台へ追加する', () => {
     // Arrange
@@ -30,6 +40,17 @@ describe('たたき台の作成', () => {
     expect(draft.technologySpecificRules).toEqual([])
     expect(label).toBe('')
   })
+
+  it('全角のコマンド名から用途を推測しない', () => {
+    // Arrange
+    const command = 'ｔｅｓｔ'
+
+    // Act
+    const label = suggestCommandLabel(command)
+
+    // Assert
+    expect(label).toBe('')
+  })
 })
 
 describe('コマンド用途ラベルの候補', () => {
@@ -54,6 +75,9 @@ describe('AGENTS.mdの整形', () => {
       commands: [{ command: 'pnpm test `unit`', label: ' テスト ' }],
       commonRuleGroups: [
         { category: 'implementation', rules: [' *を避ける* '] },
+        { category: 'quality', rules: [' 品質を確認する '] },
+        { category: 'git', rules: [' 履歴を確認する '] },
+        { category: 'agentWorkflow', rules: [' 結果を報告する '] },
         { category: 'safety', rules: [' 秘密を出さない '] },
       ],
       additionalConstraints: [' 変更は小さく '],
@@ -70,6 +94,9 @@ describe('AGENTS.mdの整形', () => {
       '## プロジェクトの目的\n\n1行目\n2行目',
       '## プロジェクトコマンド\n\n- テスト: `` pnpm test `unit` ``',
       '## 実装方針とコーディング規約\n\n- \\*を避ける\\*\n- strictを維持する',
+      '## テスト・品質確認\n\n- 品質を確認する',
+      '## Git・Pull Request運用\n\n- 履歴を確認する',
+      '## AIエージェントの作業手順\n\n- 結果を報告する',
       '## 禁止事項と安全上の制約\n\n- 秘密を出さない\n- 変更は小さく',
     ].join('\n\n') + '\n')
     expect(result).not.toContain('## 技術スタック')
@@ -78,7 +105,11 @@ describe('AGENTS.mdの整形', () => {
 
   it('不正な値でもクラッシュせず、末尾LFを一つだけにする', () => {
     // Arrange
-    const invalidDraft = { title: 'bad\ntitle', commands: [{ command: 'bad\ncommand' }] }
+    const invalidDraft = {
+      title: 'bad\ntitle',
+      commands: [{ command: 'bad\ncommand' }],
+      commonRuleGroups: requiredRuleGroups(),
+    }
 
     // Act
     const result = formatAgentsMarkdown(invalidDraft)
@@ -90,10 +121,18 @@ describe('AGENTS.mdの整形', () => {
     expect(result).not.toMatch(/\n\n\n/)
   })
 
+  it('必須ルールカテゴリが欠ける編集済み内容は生成しない', () => {
+    // Arrange
+    const incompleteDraft = { commonRuleGroups: [{ category: 'implementation', rules: ['実装する'] }] }
+
+    // Act / Assert
+    expect(() => formatAgentsMarkdown(incompleteDraft)).toThrow('テスト・品質確認')
+  })
+
   it('多数のバッククォート列を含むコマンドでもクラッシュしない', () => {
     // Arrange
     const command = '`a'.repeat(150_000)
-    const draft = { commands: [{ command, label: '' }] }
+    const draft = { commands: [{ command, label: '' }], commonRuleGroups: requiredRuleGroups() }
 
     // Act
     const result = formatAgentsMarkdown(draft)

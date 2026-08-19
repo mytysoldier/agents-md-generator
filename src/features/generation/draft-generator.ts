@@ -26,5 +26,5 @@ export function createGeneratedDraft(value: unknown): GeneratedDraft {
 
 export function suggestCommandLabel(command: unknown): string {
   if (typeof command !== 'string' || /[\r\n]/.test(command)) return ''
-  return COMMAND_LABELS.find(([term]) => containsTerm(command.trim().normalize('NFKC').toLowerCase(), term))?.[1] ?? ''
+  return COMMAND_LABELS.find(([term]) => containsTerm(command.trim().toLowerCase(), term))?.[1] ?? ''
 }
