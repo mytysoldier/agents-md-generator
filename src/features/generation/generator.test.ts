@@ -89,4 +89,16 @@ describe('AGENTS.mdの整形', () => {
     expect(result).toMatch(/[^\n]\n$/)
     expect(result).not.toMatch(/\n\n\n/)
   })
+
+  it('多数のバッククォート列を含むコマンドでもクラッシュしない', () => {
+    // Arrange
+    const command = '`a'.repeat(150_000)
+    const draft = { commands: [{ command, label: '' }] }
+
+    // Act
+    const result = formatAgentsMarkdown(draft)
+
+    // Assert
+    expect(result).toContain(`- \`\` ${command} \`\``)
+  })
 })

@@ -120,7 +120,12 @@ function formatList(items: string[]): string {
 }
 
 function formatCommand(command: ProjectCommand): string {
-  const delimiter = '`'.repeat(Math.max(...Array.from(command.command.matchAll(/`+/g), (match) => match[0].length), 0) + 1)
+  let longestBacktickRun = 0
+  for (const match of command.command.matchAll(/`+/g)) {
+    longestBacktickRun = Math.max(longestBacktickRun, match[0].length)
+  }
+
+  const delimiter = '`'.repeat(longestBacktickRun + 1)
   const label = command.label ? `${escapeMarkdown(command.label)}: ` : ''
   return `- ${label}${delimiter} ${command.command} ${delimiter}`
 }
