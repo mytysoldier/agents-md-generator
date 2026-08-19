@@ -16,7 +16,11 @@ function rulesForCategory(draft: EditedDraft, category: RuleCategory): string[] 
   return category === 'safety' ? [...rules, ...draft.additionalConstraints] : rules
 }
 
-function assertRequiredRuleGroups(draft: EditedDraft): void {
+function assertRequiredFields(draft: EditedDraft): void {
+  if (!draft.projectSummary) {
+    throw new Error('プロジェクトの目的は必須です。')
+  }
+
   for (const category of REQUIRED_RULE_CATEGORIES) {
     const rules = draft.commonRuleGroups.find((group) => group.category === category)?.rules ?? []
     if (rules.length === 0) {
@@ -27,7 +31,7 @@ function assertRequiredRuleGroups(draft: EditedDraft): void {
 
 export function formatAgentsMarkdown(value: unknown): string {
   const draft = normalizeEditedDraft(value)
-  assertRequiredRuleGroups(draft)
+  assertRequiredFields(draft)
   const sections = [`# ${escapeMarkdown(draft.title)}`, INTRODUCTION, `## プロジェクトの目的\n\n${escapeMarkdown(draft.projectSummary)}`]
   if (draft.technologyStack.length > 0) sections.push(`## 技術スタック\n\n${formatList(draft.technologyStack)}`)
   if (draft.commands.length > 0) sections.push(`## プロジェクトコマンド\n\n${draft.commands.map(formatCommand).join('\n')}`)

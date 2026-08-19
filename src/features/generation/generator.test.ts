@@ -107,6 +107,7 @@ describe('AGENTS.mdの整形', () => {
     // Arrange
     const invalidDraft = {
       title: 'bad\ntitle',
+      projectSummary: '概要',
       commands: [{ command: 'bad\ncommand' }],
       commonRuleGroups: requiredRuleGroups(),
     }
@@ -123,16 +124,24 @@ describe('AGENTS.mdの整形', () => {
 
   it('必須ルールカテゴリが欠ける編集済み内容は生成しない', () => {
     // Arrange
-    const incompleteDraft = { commonRuleGroups: [{ category: 'implementation', rules: ['実装する'] }] }
+    const incompleteDraft = { projectSummary: '概要', commonRuleGroups: [{ category: 'implementation', rules: ['実装する'] }] }
 
     // Act / Assert
     expect(() => formatAgentsMarkdown(incompleteDraft)).toThrow('テスト・品質確認')
   })
 
+  it('空のプロジェクト概要を含む編集済み内容は生成しない', () => {
+    // Arrange
+    const incompleteDraft = { projectSummary: '  ', commonRuleGroups: requiredRuleGroups() }
+
+    // Act / Assert
+    expect(() => formatAgentsMarkdown(incompleteDraft)).toThrow('プロジェクトの目的')
+  })
+
   it('多数のバッククォート列を含むコマンドでもクラッシュしない', () => {
     // Arrange
     const command = '`a'.repeat(150_000)
-    const draft = { commands: [{ command, label: '' }], commonRuleGroups: requiredRuleGroups() }
+    const draft = { projectSummary: '概要', commands: [{ command, label: '' }], commonRuleGroups: requiredRuleGroups() }
 
     // Act
     const result = formatAgentsMarkdown(draft)
