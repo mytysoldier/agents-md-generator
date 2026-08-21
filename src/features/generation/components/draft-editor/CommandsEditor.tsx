@@ -9,7 +9,7 @@ interface CommandsEditorProps {
 export function CommandsEditor({ commands, onChange }: CommandsEditorProps) {
   function updateCommand(index: number, command: string) {
     onChange(commands.map((item, itemIndex) => itemIndex === index
-      ? { ...item, command, label: suggestCommandLabel(command) || item.label }
+      ? { ...item, command, label: item.label || suggestCommandLabel(command) }
       : item))
   }
 

@@ -27,4 +27,25 @@ describe('アプリケーション', () => {
     fireEvent.click(screen.getAllByRole('button', { name: '削除' })[0])
     expect(screen.queryByLabelText('コマンド 1')).not.toBeInTheDocument()
   })
+
+  it('技術スタックの新しい行を維持し、編集したコマンド用途ラベルを上書きしない', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Act
+    const technologyStack = screen.getByLabelText('技術スタック')
+    fireEvent.change(technologyStack, { target: { value: 'TypeScript\n' } })
+    fireEvent.change(technologyStack, { target: { value: 'TypeScript\nReact' } })
+    fireEvent.click(screen.getByRole('button', { name: 'コマンドを追加' }))
+    fireEvent.change(screen.getByLabelText('コマンド 1'), { target: { value: 'pnpm test' } })
+    fireEvent.change(screen.getByLabelText('用途ラベル 1'), { target: { value: '単体テスト' } })
+    fireEvent.change(screen.getByLabelText('コマンド 1'), { target: { value: 'pnpm test --watch' } })
+
+    // Assert
+    expect(technologyStack).toHaveValue('TypeScript\nReact')
+    expect(screen.getByLabelText('用途ラベル 1')).toHaveValue('単体テスト')
+    expect(screen.queryByRole('heading', { name: '技術固有ルール' })).not.toBeInTheDocument()
+  })
 })

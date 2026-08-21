@@ -4,6 +4,10 @@ interface TechnologyRulesEditorProps {
 }
 
 export function TechnologyRulesEditor({ rules, onChange }: TechnologyRulesEditorProps) {
+  if (rules.length === 0) {
+    return null
+  }
+
   return (
     <section className="editor-section" aria-labelledby="technology-rules-heading">
       <div className="flex flex-wrap items-center gap-3">

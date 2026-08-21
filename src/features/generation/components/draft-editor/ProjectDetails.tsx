@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { EditedDraft } from '../../model'
 
 interface ProjectDetailsProps {
@@ -10,11 +11,18 @@ function linesToItems(value: string): string[] {
 }
 
 function EditableLines({ label, id, value, onChange }: { label: string; id: string; value: string[]; onChange: (value: string[]) => void }) {
+  const [rawValue, setRawValue] = useState(value.join('\n'))
+
+  function handleChange(nextValue: string) {
+    setRawValue(nextValue)
+    onChange(linesToItems(nextValue))
+  }
+
   return (
     <div className="mt-5">
       <label className="label" htmlFor={id}>{label}</label>
       <p className="field-hint">1行に1項目。追加・修正・削除できます。</p>
-      <textarea id={id} value={value.join('\n')} onChange={(event) => onChange(linesToItems(event.target.value))} rows={Math.max(3, value.length + 1)} className="field mt-2" />
+      <textarea id={id} value={rawValue} onChange={(event) => handleChange(event.target.value)} rows={Math.max(3, value.length + 1)} className="field mt-2" />
     </div>
   )
 }
