@@ -15,16 +15,16 @@ export function MinimumInputForm({ onCreateDraft }: MinimumInputFormProps) {
   const [projectSummary, setProjectSummary] = useState('')
   const [technologyStack, setTechnologyStack] = useState('')
   const [additionalConstraints, setAdditionalConstraints] = useState('')
+  const [projectSummaryError, setProjectSummaryError] = useState('')
 
   function createDraft() {
-    onCreateDraft({
-      ...createGeneratedDraft({
-        projectSummary,
-        technologyStack: linesToItems(technologyStack),
-        additionalConstraints: linesToItems(additionalConstraints),
-      }),
-      kind: 'edited',
-    })
+    const generatedDraft = createGeneratedDraft({ projectSummary, technologyStack: linesToItems(technologyStack), additionalConstraints: linesToItems(additionalConstraints) })
+    if (!generatedDraft.projectSummary) {
+      setProjectSummaryError('プロジェクト概要を入力してください。')
+      return
+    }
+    setProjectSummaryError('')
+    onCreateDraft({ ...generatedDraft, kind: 'edited' })
   }
 
   return (
@@ -39,8 +39,9 @@ export function MinimumInputForm({ onCreateDraft }: MinimumInputFormProps) {
         <p className="mt-2 leading-7 text-slate-600">プロジェクト概要だけが必須です。コマンドなどの詳細は、次の画面で必要なものだけ追加できます。</p>
         <form className="mt-6 space-y-6" onSubmit={(event) => { event.preventDefault(); createDraft() }}>
           <Field id="project-summary" label="プロジェクト概要" required hint="対象ユーザー、解決する課題、提供するものを自由に入力してください。">
-            <textarea id="project-summary" required value={projectSummary} onChange={(event) => setProjectSummary(event.target.value)} rows={5} className="field" />
+            <textarea id="project-summary" required value={projectSummary} onChange={(event) => { setProjectSummary(event.target.value); setProjectSummaryError('') }} rows={5} className="field" aria-invalid={Boolean(projectSummaryError)} aria-describedby={projectSummaryError ? 'project-summary-error' : undefined} />
           </Field>
+          {projectSummaryError && <p id="project-summary-error" className="text-sm text-rose-700" role="alert">{projectSummaryError}</p>}
           <Field id="technology-stack" label="技術スタック" hint="任意・1行に1項目。例: TypeScript、React">
             <textarea id="technology-stack" value={technologyStack} onChange={(event) => setTechnologyStack(event.target.value)} rows={3} className="field" />
           </Field>

@@ -12,6 +12,19 @@ describe('アプリケーション', () => {
     expect(screen.getByRole('heading', { name: '必要な詳細だけを整えてください' })).toBeInTheDocument()
     expect(screen.getByText('コマンドは未登録です。実行してよいコマンドが分かる場合だけ追加してください。')).toBeInTheDocument()
   })
+
+  it('空白だけのプロジェクト概要ではたたき台を作成しない', () => {
+    // Arrange
+    render(<App />)
+
+    // Act
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: ' \n\t ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Assert
+    expect(screen.getByRole('alert')).toHaveTextContent('プロジェクト概要を入力してください。')
+    expect(screen.queryByRole('heading', { name: '必要な詳細だけを整えてください' })).not.toBeInTheDocument()
+  })
   it('補完ルールを編集し、コマンドを追加して削除できる', () => {
     // Arrange
     render(<App />)
@@ -43,10 +56,13 @@ describe('アプリケーション', () => {
     fireEvent.change(screen.getByLabelText('コマンド 1'), { target: { value: 'pnpm test' } })
     fireEvent.change(screen.getByLabelText('用途ラベル 1'), { target: { value: '単体テスト' } })
     fireEvent.change(screen.getByLabelText('コマンド 1'), { target: { value: 'pnpm test --watch' } })
+    expect(screen.getByLabelText('用途ラベル 1')).toHaveValue('単体テスト')
+    fireEvent.change(screen.getByLabelText('用途ラベル 1'), { target: { value: '' } })
+    fireEvent.change(screen.getByLabelText('コマンド 1'), { target: { value: 'pnpm test --watch --runInBand' } })
 
     // Assert
     expect(technologyStack).toHaveValue('TypeScript\nReact')
-    expect(screen.getByLabelText('用途ラベル 1')).toHaveValue('単体テスト')
+    expect(screen.getByLabelText('用途ラベル 1')).toHaveValue('')
     expect(screen.queryByRole('heading', { name: '技術固有ルール' })).not.toBeInTheDocument()
   })
 
@@ -63,5 +79,24 @@ describe('アプリケーション', () => {
     const technologyRules = screen.getByRole('heading', { name: '技術固有ルール' })
     const qualityRules = screen.getByText('テスト・品質確認')
     expect(technologyRules.compareDocumentPosition(qualityRules) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+  })
+
+  it('最後の共通ルールを空にしない', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    const secondQualityRule = screen.getByLabelText('テスト・品質確認 2')
+    const removeButton = secondQualityRule.parentElement?.querySelector('button')
+    if (!removeButton) throw new Error('削除ボタンが見つかりません。')
+    fireEvent.click(removeButton)
+    const qualityRule = screen.getByLabelText('テスト・品質確認 1')
+    const originalValue = qualityRule.getAttribute('value')
+
+    // Act
+    fireEvent.change(qualityRule, { target: { value: '' } })
+
+    // Assert
+    expect(qualityRule).toHaveValue(originalValue ?? '')
   })
 })

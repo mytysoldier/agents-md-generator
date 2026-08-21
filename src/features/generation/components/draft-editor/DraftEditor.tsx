@@ -17,7 +17,7 @@ export function DraftEditor({ draft: initialDraft, onBack }: DraftEditorProps) {
     setDraft((current) => ({
       ...current,
       commonRuleGroups: current.commonRuleGroups.map((group) => group.category === category
-        ? { ...group, rules: group.rules.map((rule, ruleIndex) => ruleIndex === index ? value : rule) }
+        ? { ...group, rules: group.rules.map((rule, ruleIndex) => ruleIndex === index && !(group.rules.length === 1 && !value.trim()) ? value : rule) }
         : group),
     }))
   }
