@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { DraftEditor } from './features/generation/components/DraftEditor'
-import { MinimumInputForm } from './features/generation/components/MinimumInputForm'
+import { DraftEditor } from './features/generation/components/draft-editor/DraftEditor'
+import { MinimumInputForm } from './features/generation/components/minimum-input/MinimumInputForm'
 import type { EditedDraft } from './features/generation/model'
 
 function App() {

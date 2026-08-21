@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { createGeneratedDraft } from '../generator'
-import type { EditedDraft } from '../model'
-import { Field } from './Field'
+import { createGeneratedDraft } from '../../generator'
+import type { EditedDraft } from '../../model'
+import { Field } from '../form/Field'
 
 interface MinimumInputFormProps {
   onCreateDraft: (draft: EditedDraft) => void

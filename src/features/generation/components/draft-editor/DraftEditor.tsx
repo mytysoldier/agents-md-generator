@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { EditedDraft, RuleCategory } from '../model'
+import type { EditedDraft, RuleCategory } from '../../model'
 import { CommandsEditor } from './CommandsEditor'
 import { CommonRulesEditor } from './CommonRulesEditor'
 import { DocumentDetails } from './DocumentDetails'

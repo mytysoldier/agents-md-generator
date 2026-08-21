@@ -1,4 +1,4 @@
-import type { EditedDraft } from '../model'
+import type { EditedDraft } from '../../model'
 
 interface ProjectDetailsProps {
   draft: EditedDraft

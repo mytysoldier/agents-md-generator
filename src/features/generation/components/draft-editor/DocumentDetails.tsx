@@ -1,6 +1,6 @@
-import { DEFAULT_DOCUMENT_TITLE } from '../model'
-import type { EditedDraft } from '../model'
-import { Field } from './Field'
+import { DEFAULT_DOCUMENT_TITLE } from '../../model'
+import type { EditedDraft } from '../../model'
+import { Field } from '../form/Field'
 
 interface DocumentDetailsProps {
   draft: EditedDraft

@@ -1,5 +1,5 @@
-import { SECTION_TITLES } from '../generation-templates'
-import type { RuleCategory, RuleGroup } from '../model'
+import { SECTION_TITLES } from '../../generation-templates'
+import type { RuleCategory, RuleGroup } from '../../model'
 
 const RULE_CATEGORIES: readonly RuleCategory[] = ['implementation', 'quality', 'git', 'agentWorkflow', 'safety']
 

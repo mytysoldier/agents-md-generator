@@ -1,5 +1,5 @@
-import { suggestCommandLabel } from '../generator'
-import type { ProjectCommand } from '../model'
+import { suggestCommandLabel } from '../../generator'
+import type { ProjectCommand } from '../../model'
 
 interface CommandsEditorProps {
   commands: ProjectCommand[]
