@@ -16,7 +16,7 @@ export function CommandsEditor({ commands, onChange }: CommandsEditorProps) {
   return (
     <section className="editor-section" aria-labelledby="commands-heading">
       <h2 id="commands-heading" className="section-title">プロジェクトコマンド</h2>
-      <p className="section-hint">コマンドは未登録です。実行してよいコマンドが分かる場合だけ追加してください。</p>
+      {commands.length === 0 && <p className="section-hint">コマンドは未登録です。実行してよいコマンドが分かる場合だけ追加してください。</p>}
       {commands.map((command, index) => (
         <div className="command-row" key={index}>
           <label className="sr-only" htmlFor={`command-${index}`}>コマンド {index + 1}</label>

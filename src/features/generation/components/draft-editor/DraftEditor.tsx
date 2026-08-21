@@ -4,7 +4,6 @@ import { CommandsEditor } from './CommandsEditor'
 import { CommonRulesEditor } from './CommonRulesEditor'
 import { DocumentDetails } from './DocumentDetails'
 import { ProjectDetails } from './ProjectDetails'
-import { TechnologyRulesEditor } from './TechnologyRulesEditor'
 
 interface DraftEditorProps {
   draft: EditedDraft
@@ -52,8 +51,14 @@ export function DraftEditor({ draft: initialDraft, onBack }: DraftEditorProps) {
         <DocumentDetails draft={draft} onChange={setDraft} />
         <ProjectDetails draft={draft} onChange={setDraft} />
         <CommandsEditor commands={draft.commands} onChange={(commands) => setDraft((current) => ({ ...current, commands }))} />
-        <CommonRulesEditor groups={draft.commonRuleGroups} onRuleChange={updateRule} onAddRule={addRule} onRemoveRule={removeRule} />
-        <TechnologyRulesEditor rules={draft.technologySpecificRules} onChange={(technologySpecificRules) => setDraft((current) => ({ ...current, technologySpecificRules }))} />
+        <CommonRulesEditor
+          groups={draft.commonRuleGroups}
+          onRuleChange={updateRule}
+          onAddRule={addRule}
+          onRemoveRule={removeRule}
+          technologySpecificRules={draft.technologySpecificRules}
+          onTechnologySpecificRulesChange={(technologySpecificRules) => setDraft((current) => ({ ...current, technologySpecificRules }))}
+        />
       </div>
       <div className="mt-10 flex flex-wrap gap-3 border-t border-slate-200 pt-6">
         <button type="button" className="secondary-button" onClick={onBack}>最小入力に戻る</button>
