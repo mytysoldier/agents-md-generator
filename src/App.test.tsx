@@ -277,4 +277,38 @@ describe('アプリケーション', () => {
     expect((screen.getByLabelText('技術固有ルール 2') as HTMLInputElement).value).toContain('Composition API')
     expect(screen.queryByDisplayValue(expect.stringContaining('strict設定を維持し'))).not.toBeInTheDocument()
   })
+
+  it('編集画面で技術スタックを変更しても対応する技術固有ルールへ更新する', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.change(screen.getByLabelText('技術スタック'), { target: { value: 'TypeScript' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    fireEvent.change(screen.getByLabelText('技術スタック'), { target: { value: 'React' } })
+    fireEvent.click(screen.getByRole('button', { name: '最小入力に戻る' }))
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Assert
+    expect((screen.getByLabelText('技術固有ルール 1') as HTMLInputElement).value).toContain('既存のコンポーネント構成')
+    expect(screen.queryByDisplayValue(expect.stringContaining('strict設定を維持し'))).not.toBeInTheDocument()
+  })
+
+  it('技術スタックの追加後も技術固有ルールをプロファイルの順で表示する', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.change(screen.getByLabelText('技術スタック'), { target: { value: 'React' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    fireEvent.click(screen.getByRole('button', { name: '最小入力に戻る' }))
+    fireEvent.change(screen.getByLabelText('技術スタック'), { target: { value: 'React\nTypeScript' } })
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Assert
+    expect((screen.getByLabelText('技術固有ルール 1') as HTMLInputElement).value).toContain('strict設定を維持し')
+    expect((screen.getByLabelText('技術固有ルール 2') as HTMLInputElement).value).toContain('既存のコンポーネント構成')
+  })
 })

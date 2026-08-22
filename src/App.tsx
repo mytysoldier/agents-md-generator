@@ -7,24 +7,20 @@ import type { EditedDraft } from './features/generation/model'
 
 const EMPTY_MINIMUM_INPUT: MinimumInputValues = { projectSummary: '', technologyStack: '', additionalConstraints: '' }
 
-function hasSameItems(left: string[], right: string[]): boolean {
-  return left.length === right.length && left.every((item, index) => item === right[index])
-}
-
-function reconcileTechnologyRules(savedDraft: EditedDraft, nextDraft: EditedDraft): Pick<EditedDraft, 'technologySpecificRules' | 'technologySpecificRuleSources' | 'removedTechnologySpecificRuleSources'> {
+function reconcileTechnologyRules(savedDraft: EditedDraft, nextDraft: EditedDraft | ReturnType<typeof createGeneratedDraft>): Pick<EditedDraft, 'technologySpecificRules' | 'technologySpecificRuleSources' | 'removedTechnologySpecificRuleSources'> {
   const savedSources = savedDraft.technologySpecificRuleSources ?? createGeneratedDraft(savedDraft).technologySpecificRules
   const nextSources = nextDraft.technologySpecificRuleSources ?? nextDraft.technologySpecificRules
   const removedSources = savedDraft.removedTechnologySpecificRuleSources ?? []
-  const retainedRules = savedDraft.technologySpecificRules.flatMap((rule, index) => {
-    const source = savedSources[index] ?? null
-    return source === null || nextSources.includes(source) ? [{ rule, source }] : []
-  })
-  const retainedSources = new Set(retainedRules.map(({ source }) => source).filter((source): source is string => source !== null))
-  const newRules = nextDraft.technologySpecificRules.flatMap((rule, index) => {
+  const savedRulesBySource = new Map(savedDraft.technologySpecificRules.flatMap((rule, index) => {
+    const source = savedSources[index]
+    return source ? [[source, rule]] : []
+  }))
+  const generatedRules = nextDraft.technologySpecificRules.flatMap((rule, index) => {
     const source = nextSources[index] ?? rule
-    return retainedSources.has(source) || removedSources.includes(source) ? [] : [{ rule, source }]
+    return removedSources.includes(source) ? [] : [{ rule: savedRulesBySource.get(source) ?? rule, source }]
   })
-  const rules = [...retainedRules, ...newRules]
+  const customRules = savedDraft.technologySpecificRules.flatMap((rule, index) => savedSources[index] === null ? [{ rule, source: null }] : [])
+  const rules = [...generatedRules, ...customRules]
 
   return {
     technologySpecificRules: rules.map(({ rule }) => rule),
@@ -39,12 +35,13 @@ function App() {
   const [minimumInput, setMinimumInput] = useState<MinimumInputValues>(EMPTY_MINIMUM_INPUT)
 
   function returnToMinimumInput(editedDraft: EditedDraft) {
+    const draftToSave = { ...editedDraft, ...reconcileTechnologyRules(editedDraft, createGeneratedDraft(editedDraft)) }
     setMinimumInput({
-      projectSummary: editedDraft.projectSummary,
-      technologyStack: editedDraft.technologyStack.join('\n'),
-      additionalConstraints: editedDraft.additionalConstraints.join('\n'),
+      projectSummary: draftToSave.projectSummary,
+      technologyStack: draftToSave.technologyStack.join('\n'),
+      additionalConstraints: draftToSave.additionalConstraints.join('\n'),
     })
-    setSavedDraft(editedDraft)
+    setSavedDraft(draftToSave)
     setDraft(null)
   }
 
@@ -55,9 +52,7 @@ function App() {
           projectSummary: nextDraft.projectSummary,
           technologyStack: nextDraft.technologyStack,
           additionalConstraints: nextDraft.additionalConstraints,
-          ...(hasSameItems(savedDraft.technologyStack, nextDraft.technologyStack)
-            ? {}
-            : reconcileTechnologyRules(savedDraft, nextDraft)),
+          ...reconcileTechnologyRules(savedDraft, nextDraft),
         }
       : nextDraft
     setMinimumInput(values)
