@@ -25,6 +25,20 @@ describe('アプリケーション', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('プロジェクト概要を入力してください。')
     expect(screen.queryByRole('heading', { name: '必要な詳細だけを整えてください' })).not.toBeInTheDocument()
   })
+
+  it('編集画面でプロジェクトの目的を空にしない', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Act
+    fireEvent.change(screen.getByLabelText('プロジェクトの目的必須'), { target: { value: '  \n ' } })
+
+    // Assert
+    expect(screen.getByRole('alert')).toHaveTextContent('プロジェクトの目的を入力してください。')
+    expect(screen.getByLabelText('プロジェクトの目的必須')).toHaveValue('Webアプリ')
+  })
   it('補完ルールを編集し、コマンドを追加して削除できる', () => {
     // Arrange
     render(<App />)
@@ -98,5 +112,41 @@ describe('アプリケーション', () => {
 
     // Assert
     expect(qualityRule).toHaveValue(originalValue ?? '')
+  })
+
+  it('空の追加ルールを残しても最後の有効な共通ルールを削除できない', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    const secondQualityRule = screen.getByLabelText('テスト・品質確認 2')
+    const removeButton = secondQualityRule.parentElement?.querySelector('button')
+    if (!removeButton) throw new Error('削除ボタンが見つかりません。')
+    fireEvent.click(removeButton)
+
+    // Act
+    fireEvent.click(screen.getAllByRole('button', { name: 'ルールを追加' })[1])
+
+    // Assert
+    const qualityRule = screen.getByLabelText('テスト・品質確認 1')
+    expect(qualityRule.parentElement?.querySelector('button')).toBeDisabled()
+  })
+
+  it('最小入力へ戻ったときに編集済みの入力値を保持する', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.change(screen.getByLabelText('技術スタック'), { target: { value: 'TypeScript' } })
+    fireEvent.change(screen.getByLabelText('追加で守ってほしいこと'), { target: { value: '差分を小さくする' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    fireEvent.change(screen.getByLabelText('プロジェクトの目的必須'), { target: { value: '編集済みのWebアプリ' } })
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: '最小入力に戻る' }))
+
+    // Assert
+    expect(screen.getByLabelText('プロジェクト概要必須')).toHaveValue('編集済みのWebアプリ')
+    expect(screen.getByLabelText('技術スタック')).toHaveValue('TypeScript')
+    expect(screen.getByLabelText('追加で守ってほしいこと')).toHaveValue('差分を小さくする')
   })
 })

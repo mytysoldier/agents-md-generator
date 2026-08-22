@@ -26,6 +26,7 @@ export function CommonRulesEditor({ groups, onRuleChange, onAddRule, onRemoveRul
         {RULE_CATEGORIES.map((category) => {
           const group = groups.find((item) => item.category === category)
           if (!group) return null
+          const nonblankRuleCount = group.rules.filter((rule) => rule.trim()).length
           return (
             <Fragment key={category}>
               <fieldset className="rule-group">
@@ -35,7 +36,7 @@ export function CommonRulesEditor({ groups, onRuleChange, onAddRule, onRemoveRul
                     <div className="rule-row" key={index}>
                       <label className="sr-only" htmlFor={`${category}-rule-${index}`}>{SECTION_TITLES[category]} {index + 1}</label>
                       <input id={`${category}-rule-${index}`} value={rule} className="field" onChange={(event) => onRuleChange(category, index, event.target.value)} />
-                      <button type="button" className="secondary-button" disabled={group.rules.length === 1} onClick={() => onRemoveRule(category, index)}>削除</button>
+                      <button type="button" className="secondary-button" disabled={rule.trim().length > 0 && nonblankRuleCount === 1} onClick={() => onRemoveRule(category, index)}>削除</button>
                     </div>
                   ))}
                 </div>

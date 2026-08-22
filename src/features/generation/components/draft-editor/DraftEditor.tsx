@@ -7,7 +7,7 @@ import { ProjectDetails } from './ProjectDetails'
 
 interface DraftEditorProps {
   draft: EditedDraft
-  onBack: () => void
+  onBack: (draft: EditedDraft) => void
 }
 
 export function DraftEditor({ draft: initialDraft, onBack }: DraftEditorProps) {
@@ -34,7 +34,8 @@ export function DraftEditor({ draft: initialDraft, onBack }: DraftEditorProps) {
   function removeRule(category: RuleCategory, index: number) {
     setDraft((current) => ({
       ...current,
-      commonRuleGroups: current.commonRuleGroups.map((group) => group.category === category && group.rules.length > 1
+      commonRuleGroups: current.commonRuleGroups.map((group) => group.category === category
+        && !(group.rules[index].trim() && group.rules.filter((rule) => rule.trim()).length === 1)
         ? { ...group, rules: group.rules.filter((_, ruleIndex) => ruleIndex !== index) }
         : group),
     }))
@@ -61,7 +62,7 @@ export function DraftEditor({ draft: initialDraft, onBack }: DraftEditorProps) {
         />
       </div>
       <div className="mt-10 flex flex-wrap gap-3 border-t border-slate-200 pt-6">
-        <button type="button" className="secondary-button" onClick={onBack}>最小入力に戻る</button>
+        <button type="button" className="secondary-button" onClick={() => onBack(draft)}>最小入力に戻る</button>
         <p className="self-center text-sm leading-6 text-slate-600">最終プレビュー・コピー・ダウンロードは次の対応で追加予定です。</p>
       </div>
     </main>

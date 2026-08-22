@@ -3,18 +3,25 @@ import { createGeneratedDraft } from '../../generator'
 import type { EditedDraft } from '../../model'
 import { Field } from '../form/Field'
 
+export interface MinimumInputValues {
+  projectSummary: string
+  technologyStack: string
+  additionalConstraints: string
+}
+
 interface MinimumInputFormProps {
-  onCreateDraft: (draft: EditedDraft) => void
+  initialValues: MinimumInputValues
+  onCreateDraft: (draft: EditedDraft, values: MinimumInputValues) => void
 }
 
 function linesToItems(value: string): string[] {
   return value.split(/\r?\n/).map((item) => item.trim()).filter(Boolean)
 }
 
-export function MinimumInputForm({ onCreateDraft }: MinimumInputFormProps) {
-  const [projectSummary, setProjectSummary] = useState('')
-  const [technologyStack, setTechnologyStack] = useState('')
-  const [additionalConstraints, setAdditionalConstraints] = useState('')
+export function MinimumInputForm({ initialValues, onCreateDraft }: MinimumInputFormProps) {
+  const [projectSummary, setProjectSummary] = useState(initialValues.projectSummary)
+  const [technologyStack, setTechnologyStack] = useState(initialValues.technologyStack)
+  const [additionalConstraints, setAdditionalConstraints] = useState(initialValues.additionalConstraints)
   const [projectSummaryError, setProjectSummaryError] = useState('')
 
   function createDraft() {
@@ -24,7 +31,7 @@ export function MinimumInputForm({ onCreateDraft }: MinimumInputFormProps) {
       return
     }
     setProjectSummaryError('')
-    onCreateDraft({ ...generatedDraft, kind: 'edited' })
+    onCreateDraft({ ...generatedDraft, kind: 'edited' }, { projectSummary, technologyStack, additionalConstraints })
   }
 
   return (
