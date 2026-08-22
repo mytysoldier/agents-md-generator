@@ -8,6 +8,7 @@ const EMPTY_MINIMUM_INPUT: MinimumInputValues = { projectSummary: '', technology
 
 function App() {
   const [draft, setDraft] = useState<EditedDraft | null>(null)
+  const [savedDraft, setSavedDraft] = useState<EditedDraft | null>(null)
   const [minimumInput, setMinimumInput] = useState<MinimumInputValues>(EMPTY_MINIMUM_INPUT)
 
   function returnToMinimumInput(editedDraft: EditedDraft) {
@@ -16,14 +17,24 @@ function App() {
       technologyStack: editedDraft.technologyStack.join('\n'),
       additionalConstraints: editedDraft.additionalConstraints.join('\n'),
     })
+    setSavedDraft(editedDraft)
     setDraft(null)
+  }
+
+  function createDraft(nextDraft: EditedDraft, values: MinimumInputValues) {
+    const draftToEdit = savedDraft
+      ? { ...savedDraft, projectSummary: nextDraft.projectSummary, technologyStack: nextDraft.technologyStack, additionalConstraints: nextDraft.additionalConstraints }
+      : nextDraft
+    setMinimumInput(values)
+    setSavedDraft(null)
+    setDraft(draftToEdit)
   }
 
   if (draft) {
     return <DraftEditor draft={draft} onBack={returnToMinimumInput} />
   }
 
-  return <MinimumInputForm initialValues={minimumInput} onCreateDraft={(nextDraft, values) => { setMinimumInput(values); setDraft(nextDraft) }} />
+  return <MinimumInputForm initialValues={minimumInput} onCreateDraft={createDraft} />
 }
 
 export default App

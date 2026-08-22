@@ -140,6 +140,9 @@ describe('アプリケーション', () => {
     fireEvent.change(screen.getByLabelText('追加で守ってほしいこと'), { target: { value: '差分を小さくする' } })
     fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
     fireEvent.change(screen.getByLabelText('プロジェクトの目的必須'), { target: { value: '編集済みのWebアプリ' } })
+    fireEvent.change(screen.getByLabelText('文書タイトル'), { target: { value: 'CUSTOM.md' } })
+    fireEvent.click(screen.getByRole('button', { name: 'コマンドを追加' }))
+    fireEvent.change(screen.getByLabelText('コマンド 1'), { target: { value: 'pnpm test' } })
 
     // Act
     fireEvent.click(screen.getByRole('button', { name: '最小入力に戻る' }))
@@ -148,5 +151,28 @@ describe('アプリケーション', () => {
     expect(screen.getByLabelText('プロジェクト概要必須')).toHaveValue('編集済みのWebアプリ')
     expect(screen.getByLabelText('技術スタック')).toHaveValue('TypeScript')
     expect(screen.getByLabelText('追加で守ってほしいこと')).toHaveValue('差分を小さくする')
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    expect(screen.getByLabelText('文書タイトル')).toHaveValue('CUSTOM.md')
+    expect(screen.getByLabelText('コマンド 1')).toHaveValue('pnpm test')
+  })
+
+  it('空の追加ルールがあっても最後の有効ルールを空にしない', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    const secondQualityRule = screen.getByLabelText('テスト・品質確認 2')
+    const removeButton = secondQualityRule.parentElement?.querySelector('button')
+    if (!removeButton) throw new Error('削除ボタンが見つかりません。')
+    fireEvent.click(removeButton)
+    fireEvent.click(screen.getAllByRole('button', { name: 'ルールを追加' })[1])
+    const qualityRule = screen.getByLabelText('テスト・品質確認 1')
+    const originalValue = qualityRule.getAttribute('value')
+
+    // Act
+    fireEvent.change(qualityRule, { target: { value: '' } })
+
+    // Assert
+    expect(qualityRule).toHaveValue(originalValue ?? '')
   })
 })
