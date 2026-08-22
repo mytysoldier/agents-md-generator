@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 import App from './App'
 import { DraftEditor } from './features/generation/components/draft-editor/DraftEditor'
+import { FinalPreview } from './features/generation/components/final-preview/FinalPreview'
 import { createGeneratedDraft } from './features/generation/generator'
 
 describe('アプリケーション', () => {
@@ -57,22 +58,7 @@ describe('アプリケーション', () => {
     expect(createDraftButton).toBeInTheDocument()
   })
 
-  it('すべての画面から利用上の注意とプライバシーを確認できる', () => {
-    // Arrange
-    render(<App />)
-
-    // Act
-    expect(screen.getByText('利用上の注意・プライバシー')).toBeInTheDocument()
-    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
-    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
-
-    // Assert
-    expect(screen.getByText('利用上の注意・プライバシー')).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: 'AGENTS.mdを生成する' }))
-    expect(screen.getByText('利用上の注意・プライバシー')).toBeInTheDocument()
-  })
-
-  it('静的情報に入力データの扱い、生成結果の注意、問い合わせ先を表示する', () => {
+  it('最小入力画面から利用上の注意とプライバシーを確認できる', () => {
     // Arrange
     render(<App />)
 
@@ -80,7 +66,42 @@ describe('アプリケーション', () => {
     fireEvent.click(screen.getByText('利用上の注意・プライバシー'))
 
     // Assert
-    expect(screen.getByText(/外部への送信、端末への保存/)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: '入力データの扱い' })).toBeInTheDocument()
+  })
+
+  it('たたき台編集画面から利用上の注意とプライバシーを確認できる', () => {
+    // Arrange
+    const draft = { ...createGeneratedDraft({ projectSummary: 'Webアプリ' }), kind: 'edited' as const }
+    render(<DraftEditor draft={draft} onBack={() => {}} onGenerate={() => {}} />)
+
+    // Act
+    fireEvent.click(screen.getByText('利用上の注意・プライバシー'))
+
+    // Assert
+    expect(screen.getByRole('heading', { name: '入力データの扱い' })).toBeInTheDocument()
+  })
+
+  it('最終プレビュー画面から利用上の注意とプライバシーを確認できる', () => {
+    // Arrange
+    render(<FinalPreview markdown="# AGENTS.md\n" onBack={() => {}} />)
+
+    // Act
+    fireEvent.click(screen.getByText('利用上の注意・プライバシー'))
+
+    // Assert
+    expect(screen.getByRole('heading', { name: '入力データの扱い' })).toBeInTheDocument()
+  })
+
+  it('静的情報に実装と一致する入力データの扱い、生成結果の注意、問い合わせ先を表示する', () => {
+    // Arrange
+    render(<App />)
+
+    // Act
+    fireEvent.click(screen.getByText('利用上の注意・プライバシー'))
+
+    // Assert
+    expect(screen.getByText(/外部へ自動送信・自動保存されません/)).toBeInTheDocument()
+    expect(screen.getByText(/ダウンロードを選んだ場合を除いて保存しません/)).toBeInTheDocument()
     expect(screen.getByText(/外部AI APIは使用せず/)).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'GitHub Issues' })).toHaveAttribute('href', 'https://github.com/mytysoldier/agents-md-generator/issues')
   })

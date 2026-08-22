@@ -6,7 +6,7 @@ export function StaticInformation() {
         <div className="mt-4 space-y-4">
           <section aria-labelledby="data-handling-title">
             <h2 id="data-handling-title" className="font-bold text-slate-800">入力データの扱い</h2>
-            <p className="mt-1">入力内容と生成結果はこのブラウザ内でだけ扱います。外部への送信、端末への保存、アカウント登録、利用状況の分析は行いません。ページを再読み込みするか閉じると、入力内容は失われます。</p>
+            <p className="mt-1">入力内容と生成結果はこのブラウザ内でだけ扱い、外部へ自動送信・自動保存されません。端末にも、あなたがダウンロードを選んだ場合を除いて保存しません。アカウント登録や利用状況の分析も行いません。ページを再読み込みするか閉じると、入力内容は失われます。</p>
           </section>
           <section aria-labelledby="output-notice-title">
             <h2 id="output-notice-title" className="font-bold text-slate-800">生成結果について</h2>
