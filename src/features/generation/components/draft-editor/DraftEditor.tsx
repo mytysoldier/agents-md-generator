@@ -4,6 +4,7 @@ import { CommandsEditor } from './CommandsEditor'
 import { CommonRulesEditor } from './CommonRulesEditor'
 import { DocumentDetails } from './DocumentDetails'
 import { ProjectDetails } from './ProjectDetails'
+import { StaticInformation } from '../../../../components/StaticInformation'
 
 interface DraftEditorProps {
   draft: EditedDraft
@@ -101,6 +102,7 @@ export function DraftEditor({ draft: initialDraft, onBack, onGenerate }: DraftEd
         <button type="button" className="primary-button" onClick={generate}>AGENTS.mdを生成する</button>
       </div>
       {generationError && <p ref={generationErrorRef} className="mt-4 text-sm leading-6 text-rose-700" role="alert" tabIndex={-1}>{generationError}</p>}
+      <StaticInformation />
     </main>
   )
 }

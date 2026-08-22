@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { StaticInformation } from '../../../../components/StaticInformation'
 
 interface FinalPreviewProps {
   markdown: string
@@ -48,6 +49,7 @@ export function FinalPreview({ markdown, onBack }: FinalPreviewProps) {
         <button type="button" className="primary-button" onClick={downloadMarkdown}>AGENTS.mdをダウンロードする</button>
       </div>
       {message && <p className="mt-4 text-sm leading-6 text-slate-700" role="status">{message}</p>}
+      <StaticInformation />
     </main>
   )
 }
