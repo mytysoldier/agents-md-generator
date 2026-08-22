@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { createGeneratedDraft } from '../../generator'
 import type { EditedDraft } from '../../model'
 import { Field } from '../form/Field'
@@ -23,11 +23,13 @@ export function MinimumInputForm({ initialValues, onCreateDraft }: MinimumInputF
   const [technologyStack, setTechnologyStack] = useState(initialValues.technologyStack)
   const [additionalConstraints, setAdditionalConstraints] = useState(initialValues.additionalConstraints)
   const [projectSummaryError, setProjectSummaryError] = useState('')
+  const projectSummaryRef = useRef<HTMLTextAreaElement>(null)
 
   function createDraft() {
     const generatedDraft = createGeneratedDraft({ projectSummary, technologyStack: linesToItems(technologyStack), additionalConstraints: linesToItems(additionalConstraints) })
     if (!generatedDraft.projectSummary) {
       setProjectSummaryError('プロジェクト概要を入力してください。')
+      projectSummaryRef.current?.focus()
       return
     }
     setProjectSummaryError('')
@@ -46,7 +48,7 @@ export function MinimumInputForm({ initialValues, onCreateDraft }: MinimumInputF
         <p className="mt-2 leading-7 text-slate-600">プロジェクト概要だけが必須です。コマンドなどの詳細は、次の画面で必要なものだけ追加できます。</p>
         <form className="mt-6 space-y-6" onSubmit={(event) => { event.preventDefault(); createDraft() }}>
           <Field id="project-summary" label="プロジェクト概要" required hint="対象ユーザー、解決する課題、提供するものを自由に入力してください。">
-            <textarea id="project-summary" required value={projectSummary} onChange={(event) => { setProjectSummary(event.target.value); setProjectSummaryError('') }} rows={5} className="field" aria-invalid={Boolean(projectSummaryError)} aria-describedby={projectSummaryError ? 'project-summary-error' : undefined} />
+            <textarea ref={projectSummaryRef} id="project-summary" required value={projectSummary} onChange={(event) => { setProjectSummary(event.target.value); setProjectSummaryError('') }} rows={5} className="field" aria-invalid={Boolean(projectSummaryError)} aria-describedby={projectSummaryError ? 'project-summary-error' : undefined} />
           </Field>
           {projectSummaryError && <p id="project-summary-error" className="text-sm text-rose-700" role="alert">{projectSummaryError}</p>}
           <Field id="technology-stack" label="技術スタック" hint="任意・1行に1項目。例: TypeScript、React">
