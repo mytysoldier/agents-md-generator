@@ -6,6 +6,10 @@ import type { EditedDraft } from './features/generation/model'
 
 const EMPTY_MINIMUM_INPUT: MinimumInputValues = { projectSummary: '', technologyStack: '', additionalConstraints: '' }
 
+function hasSameItems(left: string[], right: string[]): boolean {
+  return left.length === right.length && left.every((item, index) => item === right[index])
+}
+
 function App() {
   const [draft, setDraft] = useState<EditedDraft | null>(null)
   const [savedDraft, setSavedDraft] = useState<EditedDraft | null>(null)
@@ -23,7 +27,15 @@ function App() {
 
   function createDraft(nextDraft: EditedDraft, values: MinimumInputValues) {
     const draftToEdit = savedDraft
-      ? { ...savedDraft, projectSummary: nextDraft.projectSummary, technologyStack: nextDraft.technologyStack, additionalConstraints: nextDraft.additionalConstraints }
+      ? {
+          ...savedDraft,
+          projectSummary: nextDraft.projectSummary,
+          technologyStack: nextDraft.technologyStack,
+          additionalConstraints: nextDraft.additionalConstraints,
+          technologySpecificRules: hasSameItems(savedDraft.technologyStack, nextDraft.technologyStack)
+            ? savedDraft.technologySpecificRules
+            : nextDraft.technologySpecificRules,
+        }
       : nextDraft
     setMinimumInput(values)
     setSavedDraft(null)

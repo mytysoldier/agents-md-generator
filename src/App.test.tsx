@@ -197,4 +197,22 @@ describe('アプリケーション', () => {
     // Assert
     expect(screen.getByLabelText('用途ラベル 1')).toHaveValue('')
   })
+
+  it('技術スタックを変更して再作成すると技術固有ルールを更新する', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.change(screen.getByLabelText('技術スタック'), { target: { value: 'TypeScript' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    expect((screen.getByLabelText('技術固有ルール 1') as HTMLInputElement).value).toContain('strict設定を維持し')
+    fireEvent.click(screen.getByRole('button', { name: '最小入力に戻る' }))
+    fireEvent.change(screen.getByLabelText('技術スタック'), { target: { value: 'React' } })
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Assert
+    expect((screen.getByLabelText('技術固有ルール 1') as HTMLInputElement).value).toContain('既存のコンポーネント構成')
+    expect((screen.getByLabelText('技術固有ルール 1') as HTMLInputElement).value).not.toContain('strict設定を維持し')
+  })
 })
