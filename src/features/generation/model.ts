@@ -19,6 +19,8 @@ export interface MinimumInput {
 export interface ProjectCommand {
   command: string
   label: string
+  /** UI state that distinguishes an explicit label edit from an automatic suggestion. */
+  labelIsManual?: true
 }
 
 export interface RuleGroup {
@@ -38,6 +40,10 @@ interface DraftContents {
   additionalConstraints: string[]
   commonRuleGroups: RuleGroup[]
   technologySpecificRules: string[]
+  /** Generated profile identity for each technology-specific rule; null means user-added. */
+  technologySpecificRuleSources?: Array<string | null>
+  /** Generated profiles whose rules were explicitly removed by the user. */
+  removedTechnologySpecificRuleSources?: string[]
 }
 
 export type GeneratedDraft = DraftContents & { kind: 'generated' }

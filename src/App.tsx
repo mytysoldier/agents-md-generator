@@ -1,17 +1,72 @@
+import { useState } from 'react'
+import { DraftEditor } from './features/generation/components/draft-editor/DraftEditor'
+import { MinimumInputForm } from './features/generation/components/minimum-input/MinimumInputForm'
+import type { MinimumInputValues } from './features/generation/components/minimum-input/MinimumInputForm'
+import { createGeneratedDraft } from './features/generation/generator'
+import type { EditedDraft } from './features/generation/model'
+
+const EMPTY_MINIMUM_INPUT: MinimumInputValues = { projectSummary: '', technologyStack: '', additionalConstraints: '' }
+
+function reconcileTechnologyRules(savedDraft: EditedDraft, nextDraft: EditedDraft | ReturnType<typeof createGeneratedDraft>): Pick<EditedDraft, 'technologySpecificRules' | 'technologySpecificRuleSources' | 'removedTechnologySpecificRuleSources'> {
+  const savedSources = savedDraft.technologySpecificRuleSources ?? createGeneratedDraft(savedDraft).technologySpecificRules
+  const nextSources = nextDraft.technologySpecificRuleSources ?? nextDraft.technologySpecificRules
+  const removedSources = savedDraft.removedTechnologySpecificRuleSources ?? []
+  const savedRulesBySource = new Map(savedDraft.technologySpecificRules.flatMap((rule, index) => {
+    const source = savedSources[index]
+    return source ? [[source, rule]] : []
+  }))
+  const generatedRules = nextDraft.technologySpecificRules.flatMap((rule, index) => {
+    const source = nextSources[index] ?? rule
+    return removedSources.includes(source) ? [] : [{ rule: savedRulesBySource.get(source) ?? rule, source }]
+  })
+  const customRules = nextDraft.technologySpecificRules.length > 0
+    ? savedDraft.technologySpecificRules.flatMap((rule, index) => savedSources[index] === null && rule.trim() ? [{ rule, source: null }] : [])
+    : []
+  const rules = [...generatedRules, ...customRules]
+
+  return {
+    technologySpecificRules: rules.map(({ rule }) => rule),
+    technologySpecificRuleSources: rules.map(({ source }) => source),
+    removedTechnologySpecificRuleSources: removedSources,
+  }
+}
+
 function App() {
-  return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col px-6 py-16 text-slate-900 sm:px-8">
-      <header className="space-y-5">
-        <p className="text-sm font-semibold tracking-wide text-indigo-700">AGENTS.md GENERATOR</p>
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">プロジェクト用のAGENTS.mdを、迷わず作る。</h1>
-        <p className="max-w-2xl text-lg leading-8 text-slate-600">いくつかの質問に答えるだけで、AIエージェントへ渡す作業ルールの雛形を生成します。</p>
-      </header>
-      <section className="mt-12 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8" aria-labelledby="next-steps-title">
-        <h2 id="next-steps-title" className="text-xl font-bold">準備中です</h2>
-        <p className="mt-3 leading-7 text-slate-600">質問フォームとAGENTS.mdの生成機能を順次追加します。入力した内容は、初期リリースではブラウザの外へ送信・保存しません。</p>
-      </section>
-    </main>
-  )
+  const [draft, setDraft] = useState<EditedDraft | null>(null)
+  const [savedDraft, setSavedDraft] = useState<EditedDraft | null>(null)
+  const [minimumInput, setMinimumInput] = useState<MinimumInputValues>(EMPTY_MINIMUM_INPUT)
+
+  function returnToMinimumInput(editedDraft: EditedDraft) {
+    const draftToSave = { ...editedDraft, ...reconcileTechnologyRules(editedDraft, createGeneratedDraft(editedDraft)) }
+    setMinimumInput({
+      projectSummary: draftToSave.projectSummary,
+      technologyStack: draftToSave.technologyStack.join('\n'),
+      additionalConstraints: draftToSave.additionalConstraints.join('\n'),
+    })
+    setSavedDraft(draftToSave)
+    setDraft(null)
+  }
+
+  function createDraft(nextDraft: EditedDraft, values: MinimumInputValues) {
+    const draftToEdit = savedDraft
+      ? {
+          ...savedDraft,
+          projectSummary: nextDraft.projectSummary,
+          technologyStack: nextDraft.technologyStack,
+          additionalConstraints: nextDraft.additionalConstraints,
+          ...reconcileTechnologyRules(savedDraft, nextDraft),
+        }
+      : nextDraft
+    setMinimumInput(values)
+    setSavedDraft(null)
+    setDraft(draftToEdit)
+  }
+
+  if (draft) {
+    return <DraftEditor draft={draft} onBack={returnToMinimumInput} />
+  }
+
+  return <MinimumInputForm initialValues={minimumInput} onCreateDraft={createDraft} />
 }
 
 export default App

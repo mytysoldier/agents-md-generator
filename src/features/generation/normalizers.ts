@@ -51,7 +51,11 @@ function normalizeCommand(value: unknown): ProjectCommand | null {
     return null
   }
 
-  return { command, label: normalizeSingleLine(value.label) }
+  return {
+    command,
+    label: normalizeSingleLine(value.label),
+    ...(value.labelIsManual === true ? { labelIsManual: true as const } : {}),
+  }
 }
 
 function normalizeRuleGroup(value: unknown, requiredCategories: readonly RuleCategory[]): RuleGroup | null {
@@ -63,6 +67,11 @@ function normalizeRuleGroup(value: unknown, requiredCategories: readonly RuleCat
     category: value.category as RuleCategory,
     rules: normalizeStringList(value.rules),
   }
+}
+
+function normalizeTechnologyRuleSources(value: unknown, rules: string[]): Array<string | null> | undefined {
+  if (!Array.isArray(value)) return undefined
+  return rules.map((_, index) => typeof value[index] === 'string' ? normalizeSingleLine(value[index]) : null)
 }
 
 export function normalizeMinimumInput(value: unknown): MinimumInput {
@@ -92,6 +101,9 @@ export function normalizeEditedDraft(
   const commonRuleGroups = Array.isArray(value.commonRuleGroups)
     ? value.commonRuleGroups.map((group) => normalizeRuleGroup(group, requiredCategories)).filter((group): group is RuleGroup => group !== null)
     : []
+  const technologySpecificRules = normalizeStringList(value.technologySpecificRules)
+  const technologySpecificRuleSources = normalizeTechnologyRuleSources(value.technologySpecificRuleSources, technologySpecificRules)
+  const removedTechnologySpecificRuleSources = normalizeStringList(value.removedTechnologySpecificRuleSources)
 
   return {
     kind: 'edited',
@@ -101,7 +113,9 @@ export function normalizeEditedDraft(
     commands,
     additionalConstraints: normalizeStringList(value.additionalConstraints),
     commonRuleGroups,
-    technologySpecificRules: normalizeStringList(value.technologySpecificRules),
+    technologySpecificRules,
+    ...(technologySpecificRuleSources ? { technologySpecificRuleSources } : {}),
+    ...(removedTechnologySpecificRuleSources.length > 0 ? { removedTechnologySpecificRuleSources } : {}),
   }
 }
 
