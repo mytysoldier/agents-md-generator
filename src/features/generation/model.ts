@@ -19,6 +19,8 @@ export interface MinimumInput {
 export interface ProjectCommand {
   command: string
   label: string
+  /** UI state that distinguishes an explicit label edit from an automatic suggestion. */
+  labelIsManual?: true
 }
 
 export interface RuleGroup {

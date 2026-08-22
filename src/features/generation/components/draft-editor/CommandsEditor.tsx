@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { suggestCommandLabel } from '../../generator'
 import type { ProjectCommand } from '../../model'
 
@@ -8,23 +7,17 @@ interface CommandsEditorProps {
 }
 
 export function CommandsEditor({ commands, onChange }: CommandsEditorProps) {
-  const [manualLabelIndexes, setManualLabelIndexes] = useState<Set<number>>(() => new Set(
-    commands.flatMap((command, index) => command.label === suggestCommandLabel(command.command) ? [] : [index]),
-  ))
-
   function updateCommand(index: number, command: string) {
     onChange(commands.map((item, itemIndex) => itemIndex === index
-      ? { ...item, command, label: manualLabelIndexes.has(index) ? item.label : suggestCommandLabel(command) }
+      ? { ...item, command, label: item.labelIsManual ? item.label : suggestCommandLabel(command) }
       : item))
   }
 
   function updateLabel(index: number, label: string) {
-    setManualLabelIndexes((current) => new Set(current).add(index))
-    onChange(commands.map((item, itemIndex) => itemIndex === index ? { ...item, label } : item))
+    onChange(commands.map((item, itemIndex) => itemIndex === index ? { ...item, label, labelIsManual: true } : item))
   }
 
   function removeCommand(index: number) {
-    setManualLabelIndexes((current) => new Set([...current].filter((itemIndex) => itemIndex !== index).map((itemIndex) => itemIndex > index ? itemIndex - 1 : itemIndex)))
     onChange(commands.filter((_, itemIndex) => itemIndex !== index))
   }
 

@@ -51,7 +51,11 @@ function normalizeCommand(value: unknown): ProjectCommand | null {
     return null
   }
 
-  return { command, label: normalizeSingleLine(value.label) }
+  return {
+    command,
+    label: normalizeSingleLine(value.label),
+    ...(value.labelIsManual === true ? { labelIsManual: true as const } : {}),
+  }
 }
 
 function normalizeRuleGroup(value: unknown, requiredCategories: readonly RuleCategory[]): RuleGroup | null {

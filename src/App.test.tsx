@@ -178,4 +178,23 @@ describe('アプリケーション', () => {
     // Assert
     expect(qualityRule).toHaveValue(originalValue ?? '')
   })
+
+  it('空にした用途ラベルを画面遷移後も自動補完しない', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    fireEvent.click(screen.getByRole('button', { name: 'コマンドを追加' }))
+    fireEvent.change(screen.getByLabelText('コマンド 1'), { target: { value: 'pnpm test' } })
+    fireEvent.change(screen.getByLabelText('用途ラベル 1'), { target: { value: '' } })
+    fireEvent.change(screen.getByLabelText('コマンド 1'), { target: { value: 'pnpm run' } })
+    fireEvent.click(screen.getByRole('button', { name: '最小入力に戻る' }))
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Act
+    fireEvent.change(screen.getByLabelText('コマンド 1'), { target: { value: 'pnpm test --watch' } })
+
+    // Assert
+    expect(screen.getByLabelText('用途ラベル 1')).toHaveValue('')
+  })
 })
