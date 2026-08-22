@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react'
+import { vi } from 'vitest'
 import App from './App'
 
 describe('アプリケーション', () => {
@@ -408,5 +409,50 @@ describe('アプリケーション', () => {
 
     // Assert
     expect(screen.queryByRole('heading', { name: '技術固有ルール' })).not.toBeInTheDocument()
+  })
+
+  it('編集済みの内容をプレビュー、コピー、ダウンロードで同じMarkdownとして扱う', async () => {
+    // Arrange
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    const createObjectURL = vi.fn().mockReturnValue('blob:agents-md')
+    const revokeObjectURL = vi.fn()
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => undefined)
+    Object.assign(navigator, { clipboard: { writeText } })
+    Object.assign(URL, { createObjectURL, revokeObjectURL })
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: '日本語の概要' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    fireEvent.change(screen.getByLabelText('文書タイトル'), { target: { value: 'CUSTOM.md' } })
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: 'AGENTS.mdを生成する' }))
+    const preview = screen.getByText('# CUSTOM\\.md', { exact: false }).parentElement
+    fireEvent.click(screen.getByRole('button', { name: 'コピーする' }))
+    await screen.findByRole('status')
+    fireEvent.click(screen.getByRole('button', { name: 'AGENTS.mdをダウンロードする' }))
+
+    // Assert
+    expect(preview).toHaveTextContent('日本語の概要')
+    expect(writeText).toHaveBeenCalledWith(preview?.textContent)
+    expect(createObjectURL).toHaveBeenCalledWith(expect.objectContaining({ type: 'text/markdown;charset=utf-8' }))
+    expect(click).toHaveBeenCalled()
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:agents-md')
+    click.mockRestore()
+  })
+
+  it('Clipboard APIが利用できない場合でもコピー操作でクラッシュしない', async () => {
+    // Arrange
+    Object.assign(navigator, { clipboard: undefined })
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    fireEvent.click(screen.getByRole('button', { name: 'AGENTS.mdを生成する' }))
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: 'コピーする' }))
+
+    // Assert
+    expect(await screen.findByRole('status')).toHaveTextContent('コピーできませんでした。')
+    expect(screen.getByRole('heading', { name: 'AGENTS.mdを確認してください' })).toBeInTheDocument()
   })
 })
