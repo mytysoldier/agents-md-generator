@@ -6,6 +6,16 @@ interface TechnologyRulesEditorProps {
 }
 
 export function TechnologyRulesEditor({ rules, sources, removedSources, onChange }: TechnologyRulesEditorProps) {
+  function updateRule(index: number, value: string) {
+    if (!value.trim()) {
+      const source = sources[index]
+      onChange(rules.filter((_, itemIndex) => itemIndex !== index), sources.filter((_, itemIndex) => itemIndex !== index), source === null ? removedSources : [...removedSources, source])
+      return
+    }
+
+    onChange(rules.map((item, itemIndex) => itemIndex === index ? value : item), sources, removedSources)
+  }
+
   if (rules.length === 0) {
     return null
   }
@@ -21,7 +31,7 @@ export function TechnologyRulesEditor({ rules, sources, removedSources, onChange
         {rules.map((rule, index) => (
           <div className="rule-row" key={index}>
             <label className="sr-only" htmlFor={`technology-rule-${index}`}>技術固有ルール {index + 1}</label>
-            <input id={`technology-rule-${index}`} value={rule} className="field" onChange={(event) => onChange(rules.map((item, itemIndex) => itemIndex === index ? event.target.value : item), sources, removedSources)} />
+            <input id={`technology-rule-${index}`} value={rule} className="field" onChange={(event) => updateRule(index, event.target.value)} />
             <button type="button" className="secondary-button" onClick={() => onChange(rules.filter((_, itemIndex) => itemIndex !== index), sources.filter((_, itemIndex) => itemIndex !== index), sources[index] === null ? removedSources : [...removedSources, sources[index]])}>削除</button>
           </div>
         ))}

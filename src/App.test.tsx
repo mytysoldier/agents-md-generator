@@ -351,4 +351,18 @@ describe('アプリケーション', () => {
     // Assert
     expect(screen.getByLabelText('技術固有ルール 1')).toHaveValue('独自ルール')
   })
+
+  it('技術固有ルールを空にした編集を削除として扱う', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.change(screen.getByLabelText('技術スタック'), { target: { value: 'TypeScript' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Act
+    fireEvent.change(screen.getByLabelText('技術固有ルール 1'), { target: { value: '  ' } })
+
+    // Assert
+    expect(screen.queryByRole('heading', { name: '技術固有ルール' })).not.toBeInTheDocument()
+  })
 })
