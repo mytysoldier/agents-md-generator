@@ -7,6 +7,8 @@ interface CommandsEditorProps {
 }
 
 export function CommandsEditor({ commands, onChange }: CommandsEditorProps) {
+  const hasRegisteredCommands = commands.some((command) => command.command.trim().length > 0)
+
   function updateCommand(index: number, command: string) {
     onChange(commands.map((item, itemIndex) => itemIndex === index
       ? { ...item, command, label: item.labelIsManual ? item.label : suggestCommandLabel(command) }
@@ -24,7 +26,7 @@ export function CommandsEditor({ commands, onChange }: CommandsEditorProps) {
   return (
     <section className="editor-section" aria-labelledby="commands-heading">
       <h2 id="commands-heading" className="section-title">プロジェクトコマンド</h2>
-      {commands.length === 0 && <p className="section-hint">コマンドは未登録です。実行してよいコマンドが分かる場合だけ追加してください。</p>}
+      {!hasRegisteredCommands && <p className="section-hint">コマンドは未登録です。実行してよいコマンドが分かる場合だけ追加してください。</p>}
       {commands.map((command, index) => (
         <div className="command-row" key={index}>
           <label className="sr-only" htmlFor={`command-${index}`}>コマンド {index + 1}</label>

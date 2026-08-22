@@ -56,6 +56,19 @@ describe('アプリケーション', () => {
     expect(screen.queryByLabelText('コマンド 1')).not.toBeInTheDocument()
   })
 
+  it('空のコマンド行は未登録として案内を表示する', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: 'コマンドを追加' }))
+
+    // Assert
+    expect(screen.getByText('コマンドは未登録です。実行してよいコマンドが分かる場合だけ追加してください。')).toBeInTheDocument()
+  })
+
   it('技術スタックの新しい行を維持し、編集したコマンド用途ラベルを上書きしない', () => {
     // Arrange
     render(<App />)
