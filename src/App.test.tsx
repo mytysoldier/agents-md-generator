@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { vi } from 'vitest'
 import App from './App'
+import { DraftEditor } from './features/generation/components/draft-editor/DraftEditor'
+import { createGeneratedDraft } from './features/generation/generator'
 
 describe('アプリケーション', () => {
   it('概要だけを入力して、コマンドを要求せずにたたき台を作成できる', () => {
@@ -24,7 +26,42 @@ describe('アプリケーション', () => {
 
     // Assert
     expect(screen.getByRole('alert')).toHaveTextContent('プロジェクト概要を入力してください。')
+    expect(screen.getByLabelText('プロジェクト概要必須')).toHaveFocus()
     expect(screen.queryByRole('heading', { name: '必要な詳細だけを整えてください' })).not.toBeInTheDocument()
+  })
+
+  it('編集画面の必須入力と最終生成操作はラベル付きで利用できる', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Act / Assert
+    expect(screen.getByRole('textbox', { name: /プロジェクトの目的\s*必須/ })).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: '文書タイトル' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'AGENTS.mdを生成する' })).toBeInTheDocument()
+  })
+
+  it('主要な操作は名前付きのボタンとラベル付き入力として利用できる', () => {
+    // Arrange
+    render(<App />)
+
+    // Act / Assert
+    expect(screen.getByRole('textbox', { name: /プロジェクト概要\s*必須/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'たたき台を作成する' })).toBeInTheDocument()
+  })
+
+  it('最終生成で例外が起きてもクラッシュせず、エラーを表示する', () => {
+    // Arrange
+    const draft = { ...createGeneratedDraft({ projectSummary: 'Webアプリ' }), kind: 'edited' as const }
+    render(<DraftEditor draft={draft} onBack={() => {}} onGenerate={() => { throw new Error('生成に失敗しました。') }} />)
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: 'AGENTS.mdを生成する' }))
+
+    // Assert
+    expect(screen.getByRole('alert')).toHaveTextContent('AGENTS.mdを生成できませんでした。')
+    expect(screen.getByRole('heading', { name: '必要な詳細だけを整えてください' })).toBeInTheDocument()
   })
 
   it('編集画面でプロジェクトの目的を空にしない', () => {
