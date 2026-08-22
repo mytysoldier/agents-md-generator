@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { DraftEditor } from './features/generation/components/draft-editor/DraftEditor'
+import { FinalPreview } from './features/generation/components/final-preview/FinalPreview'
 import { MinimumInputForm } from './features/generation/components/minimum-input/MinimumInputForm'
 import type { MinimumInputValues } from './features/generation/components/minimum-input/MinimumInputForm'
-import { createGeneratedDraft } from './features/generation/generator'
+import { createGeneratedDraft, formatAgentsMarkdown } from './features/generation/generator'
 import type { EditedDraft } from './features/generation/model'
 
 const EMPTY_MINIMUM_INPUT: MinimumInputValues = { projectSummary: '', technologyStack: '', additionalConstraints: '' }
@@ -35,6 +36,7 @@ function App() {
   const [draft, setDraft] = useState<EditedDraft | null>(null)
   const [savedDraft, setSavedDraft] = useState<EditedDraft | null>(null)
   const [minimumInput, setMinimumInput] = useState<MinimumInputValues>(EMPTY_MINIMUM_INPUT)
+  const [finalMarkdown, setFinalMarkdown] = useState<string | null>(null)
 
   function returnToMinimumInput(editedDraft: EditedDraft) {
     const draftToSave = { ...editedDraft, ...reconcileTechnologyRules(editedDraft, createGeneratedDraft(editedDraft)) }
@@ -62,8 +64,17 @@ function App() {
     setDraft(draftToEdit)
   }
 
+  function generateFinalMarkdown(editedDraft: EditedDraft) {
+    setDraft(editedDraft)
+    setFinalMarkdown(formatAgentsMarkdown(editedDraft))
+  }
+
+  if (finalMarkdown) {
+    return <FinalPreview markdown={finalMarkdown} onBack={() => setFinalMarkdown(null)} />
+  }
+
   if (draft) {
-    return <DraftEditor draft={draft} onBack={returnToMinimumInput} />
+    return <DraftEditor draft={draft} onBack={returnToMinimumInput} onGenerate={generateFinalMarkdown} />
   }
 
   return <MinimumInputForm initialValues={minimumInput} onCreateDraft={createDraft} />

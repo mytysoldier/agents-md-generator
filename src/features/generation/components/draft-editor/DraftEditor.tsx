@@ -8,9 +8,10 @@ import { ProjectDetails } from './ProjectDetails'
 interface DraftEditorProps {
   draft: EditedDraft
   onBack: (draft: EditedDraft) => void
+  onGenerate: (draft: EditedDraft) => void
 }
 
-export function DraftEditor({ draft: initialDraft, onBack }: DraftEditorProps) {
+export function DraftEditor({ draft: initialDraft, onBack, onGenerate }: DraftEditorProps) {
   const [draft, setDraft] = useState(initialDraft)
 
   function updateRule(category: RuleCategory, index: number, value: string) {
@@ -72,7 +73,7 @@ export function DraftEditor({ draft: initialDraft, onBack }: DraftEditorProps) {
       </div>
       <div className="mt-10 flex flex-wrap gap-3 border-t border-slate-200 pt-6">
         <button type="button" className="secondary-button" onClick={() => onBack(draft)}>最小入力に戻る</button>
-        <p className="self-center text-sm leading-6 text-slate-600">最終プレビュー・コピー・ダウンロードは次の対応で追加予定です。</p>
+        <button type="button" className="primary-button" onClick={() => onGenerate(draft)}>AGENTS.mdを生成する</button>
       </div>
     </main>
   )
