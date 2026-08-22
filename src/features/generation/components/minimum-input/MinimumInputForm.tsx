@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { createGeneratedDraft } from '../../generator'
 import type { EditedDraft } from '../../model'
 import { Field } from '../form/Field'
+import { StaticInformation } from '../../../../components/StaticInformation'
 
 export interface MinimumInputValues {
   projectSummary: string
@@ -60,6 +61,7 @@ export function MinimumInputForm({ initialValues, onCreateDraft }: MinimumInputF
           <button className="primary-button" type="submit">たたき台を作成する</button>
         </form>
       </section>
+      <StaticInformation />
     </main>
   )
 }

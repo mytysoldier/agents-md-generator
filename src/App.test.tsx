@@ -57,6 +57,34 @@ describe('アプリケーション', () => {
     expect(createDraftButton).toBeInTheDocument()
   })
 
+  it('すべての画面から利用上の注意とプライバシーを確認できる', () => {
+    // Arrange
+    render(<App />)
+
+    // Act
+    expect(screen.getByText('利用上の注意・プライバシー')).toBeInTheDocument()
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Assert
+    expect(screen.getByText('利用上の注意・プライバシー')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'AGENTS.mdを生成する' }))
+    expect(screen.getByText('利用上の注意・プライバシー')).toBeInTheDocument()
+  })
+
+  it('静的情報に入力データの扱い、生成結果の注意、問い合わせ先を表示する', () => {
+    // Arrange
+    render(<App />)
+
+    // Act
+    fireEvent.click(screen.getByText('利用上の注意・プライバシー'))
+
+    // Assert
+    expect(screen.getByText(/外部への送信、端末への保存/)).toBeInTheDocument()
+    expect(screen.getByText(/外部AI APIは使用せず/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'GitHub Issues' })).toHaveAttribute('href', 'https://github.com/mytysoldier/agents-md-generator/issues')
+  })
+
   it('最終生成で例外が起きてもクラッシュせず、エラーを表示する', () => {
     // Arrange
     const draft = { ...createGeneratedDraft({ projectSummary: 'Webアプリ' }), kind: 'edited' as const }
