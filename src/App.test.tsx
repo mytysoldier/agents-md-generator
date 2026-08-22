@@ -330,4 +330,25 @@ describe('アプリケーション', () => {
     expect(screen.queryByRole('heading', { name: '技術固有ルール' })).not.toBeInTheDocument()
     expect(screen.queryByDisplayValue('独自ルール')).not.toBeInTheDocument()
   })
+
+  it('生成済みルールを削除しても一致する技術プロファイルの手動追加ルールを保持する', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.change(screen.getByLabelText('技術スタック'), { target: { value: 'TypeScript' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    fireEvent.click(screen.getAllByRole('button', { name: 'ルールを追加' })[1])
+    fireEvent.change(screen.getByLabelText('技術固有ルール 2'), { target: { value: '独自ルール' } })
+    const generatedRule = screen.getByLabelText('技術固有ルール 1')
+    const removeButton = generatedRule.parentElement?.querySelector('button')
+    if (!removeButton) throw new Error('削除ボタンが見つかりません。')
+    fireEvent.click(removeButton)
+    fireEvent.click(screen.getByRole('button', { name: '最小入力に戻る' }))
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Assert
+    expect(screen.getByLabelText('技術固有ルール 1')).toHaveValue('独自ルール')
+  })
 })
