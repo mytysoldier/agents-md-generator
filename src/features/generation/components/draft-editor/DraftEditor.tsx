@@ -19,10 +19,11 @@ export function DraftEditor({ draft: initialDraft, onBack }: DraftEditorProps) {
       commonRuleGroups: current.commonRuleGroups.map((group) => group.category === category
         ? {
             ...group,
-            rules: group.rules.map((rule, ruleIndex) => ruleIndex === index
-              && !(rule.trim() && group.rules.filter((item) => item.trim()).length === 1 && !value.trim())
-              ? value
-              : rule),
+            rules: !value.trim()
+              ? group.rules[index].trim() && group.rules.filter((item) => item.trim()).length === 1
+                ? group.rules
+                : group.rules.filter((_, ruleIndex) => ruleIndex !== index)
+              : group.rules.map((rule, ruleIndex) => ruleIndex === index ? value : rule),
           }
         : group),
     }))

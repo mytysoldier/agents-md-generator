@@ -127,6 +127,19 @@ describe('アプリケーション', () => {
     expect(qualityRule).toHaveValue(originalValue ?? '')
   })
 
+  it('最後以外の共通ルールを空にした編集は削除として扱う', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Act
+    fireEvent.change(screen.getByLabelText('テスト・品質確認 2'), { target: { value: '  ' } })
+
+    // Assert
+    expect(screen.queryByLabelText('テスト・品質確認 2')).not.toBeInTheDocument()
+  })
+
   it('空の追加ルールを残しても最後の有効な共通ルールを削除できない', () => {
     // Arrange
     render(<App />)
