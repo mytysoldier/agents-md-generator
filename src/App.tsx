@@ -2,12 +2,23 @@ import { useState } from 'react'
 import { DraftEditor } from './features/generation/components/draft-editor/DraftEditor'
 import { MinimumInputForm } from './features/generation/components/minimum-input/MinimumInputForm'
 import type { MinimumInputValues } from './features/generation/components/minimum-input/MinimumInputForm'
+import { createGeneratedDraft } from './features/generation/generator'
 import type { EditedDraft } from './features/generation/model'
 
 const EMPTY_MINIMUM_INPUT: MinimumInputValues = { projectSummary: '', technologyStack: '', additionalConstraints: '' }
 
 function hasSameItems(left: string[], right: string[]): boolean {
   return left.length === right.length && left.every((item, index) => item === right[index])
+}
+
+function reconcileTechnologyRules(savedDraft: EditedDraft, nextDraft: EditedDraft): string[] {
+  const previousDefaults = createGeneratedDraft(savedDraft).technologySpecificRules
+  const nextDefaults = nextDraft.technologySpecificRules
+  const retainedRules = previousDefaults.flatMap((rule, index) => nextDefaults.includes(rule) && savedDraft.technologySpecificRules[index] ? [savedDraft.technologySpecificRules[index]] : [])
+  const additionalRules = savedDraft.technologySpecificRules.slice(previousDefaults.length)
+  const newlyMatchedRules = nextDefaults.filter((rule) => !previousDefaults.includes(rule))
+
+  return [...retainedRules, ...additionalRules, ...newlyMatchedRules]
 }
 
 function App() {
@@ -34,7 +45,7 @@ function App() {
           additionalConstraints: nextDraft.additionalConstraints,
           technologySpecificRules: hasSameItems(savedDraft.technologyStack, nextDraft.technologyStack)
             ? savedDraft.technologySpecificRules
-            : nextDraft.technologySpecificRules,
+            : reconcileTechnologyRules(savedDraft, nextDraft),
         }
       : nextDraft
     setMinimumInput(values)
