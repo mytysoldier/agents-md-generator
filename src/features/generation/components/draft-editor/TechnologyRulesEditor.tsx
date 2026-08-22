@@ -1,9 +1,10 @@
 interface TechnologyRulesEditorProps {
   rules: string[]
-  onChange: (rules: string[]) => void
+  sources: Array<string | null>
+  onChange: (rules: string[], sources: Array<string | null>) => void
 }
 
-export function TechnologyRulesEditor({ rules, onChange }: TechnologyRulesEditorProps) {
+export function TechnologyRulesEditor({ rules, sources, onChange }: TechnologyRulesEditorProps) {
   if (rules.length === 0) {
     return null
   }
@@ -19,12 +20,12 @@ export function TechnologyRulesEditor({ rules, onChange }: TechnologyRulesEditor
         {rules.map((rule, index) => (
           <div className="rule-row" key={index}>
             <label className="sr-only" htmlFor={`technology-rule-${index}`}>技術固有ルール {index + 1}</label>
-            <input id={`technology-rule-${index}`} value={rule} className="field" onChange={(event) => onChange(rules.map((item, itemIndex) => itemIndex === index ? event.target.value : item))} />
-            <button type="button" className="secondary-button" onClick={() => onChange(rules.filter((_, itemIndex) => itemIndex !== index))}>削除</button>
+            <input id={`technology-rule-${index}`} value={rule} className="field" onChange={(event) => onChange(rules.map((item, itemIndex) => itemIndex === index ? event.target.value : item), sources)} />
+            <button type="button" className="secondary-button" onClick={() => onChange(rules.filter((_, itemIndex) => itemIndex !== index), sources.filter((_, itemIndex) => itemIndex !== index))}>削除</button>
           </div>
         ))}
       </div>
-      <button type="button" className="secondary-button mt-3" onClick={() => onChange([...rules, ''])}>ルールを追加</button>
+      <button type="button" className="secondary-button mt-3" onClick={() => onChange([...rules, ''], [...sources, null])}>ルールを追加</button>
     </section>
   )
 }

@@ -40,6 +40,8 @@ interface DraftContents {
   additionalConstraints: string[]
   commonRuleGroups: RuleGroup[]
   technologySpecificRules: string[]
+  /** Generated profile identity for each technology-specific rule; null means user-added. */
+  technologySpecificRuleSources?: Array<string | null>
 }
 
 export type GeneratedDraft = DraftContents & { kind: 'generated' }

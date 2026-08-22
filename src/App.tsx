@@ -11,14 +11,24 @@ function hasSameItems(left: string[], right: string[]): boolean {
   return left.length === right.length && left.every((item, index) => item === right[index])
 }
 
-function reconcileTechnologyRules(savedDraft: EditedDraft, nextDraft: EditedDraft): string[] {
-  const previousDefaults = createGeneratedDraft(savedDraft).technologySpecificRules
-  const nextDefaults = nextDraft.technologySpecificRules
-  const retainedRules = previousDefaults.flatMap((rule, index) => nextDefaults.includes(rule) && savedDraft.technologySpecificRules[index] ? [savedDraft.technologySpecificRules[index]] : [])
-  const additionalRules = savedDraft.technologySpecificRules.slice(previousDefaults.length)
-  const newlyMatchedRules = nextDefaults.filter((rule) => !previousDefaults.includes(rule))
+function reconcileTechnologyRules(savedDraft: EditedDraft, nextDraft: EditedDraft): Pick<EditedDraft, 'technologySpecificRules' | 'technologySpecificRuleSources'> {
+  const savedSources = savedDraft.technologySpecificRuleSources ?? createGeneratedDraft(savedDraft).technologySpecificRules
+  const nextSources = nextDraft.technologySpecificRuleSources ?? nextDraft.technologySpecificRules
+  const retainedRules = savedDraft.technologySpecificRules.flatMap((rule, index) => {
+    const source = savedSources[index] ?? null
+    return source === null || nextSources.includes(source) ? [{ rule, source }] : []
+  })
+  const retainedSources = new Set(retainedRules.map(({ source }) => source).filter((source): source is string => source !== null))
+  const newRules = nextDraft.technologySpecificRules.flatMap((rule, index) => {
+    const source = nextSources[index] ?? rule
+    return retainedSources.has(source) ? [] : [{ rule, source }]
+  })
+  const rules = [...retainedRules, ...newRules]
 
-  return [...retainedRules, ...additionalRules, ...newlyMatchedRules]
+  return {
+    technologySpecificRules: rules.map(({ rule }) => rule),
+    technologySpecificRuleSources: rules.map(({ source }) => source),
+  }
 }
 
 function App() {
@@ -43,9 +53,9 @@ function App() {
           projectSummary: nextDraft.projectSummary,
           technologyStack: nextDraft.technologyStack,
           additionalConstraints: nextDraft.additionalConstraints,
-          technologySpecificRules: hasSameItems(savedDraft.technologyStack, nextDraft.technologyStack)
-            ? savedDraft.technologySpecificRules
-            : reconcileTechnologyRules(savedDraft, nextDraft),
+          ...(hasSameItems(savedDraft.technologyStack, nextDraft.technologyStack)
+            ? {}
+            : reconcileTechnologyRules(savedDraft, nextDraft)),
         }
       : nextDraft
     setMinimumInput(values)

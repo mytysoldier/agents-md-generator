@@ -11,10 +11,11 @@ interface CommonRulesEditorProps {
   onAddRule: (category: RuleCategory) => void
   onRemoveRule: (category: RuleCategory, index: number) => void
   technologySpecificRules: string[]
-  onTechnologySpecificRulesChange: (rules: string[]) => void
+  technologySpecificRuleSources: Array<string | null>
+  onTechnologySpecificRulesChange: (rules: string[], sources: Array<string | null>) => void
 }
 
-export function CommonRulesEditor({ groups, onRuleChange, onAddRule, onRemoveRule, technologySpecificRules, onTechnologySpecificRulesChange }: CommonRulesEditorProps) {
+export function CommonRulesEditor({ groups, onRuleChange, onAddRule, onRemoveRule, technologySpecificRules, technologySpecificRuleSources, onTechnologySpecificRulesChange }: CommonRulesEditorProps) {
   return (
     <section className="editor-section" aria-labelledby="common-rules-heading">
       <div className="flex flex-wrap items-center gap-3">
@@ -42,7 +43,7 @@ export function CommonRulesEditor({ groups, onRuleChange, onAddRule, onRemoveRul
                 </div>
                 <button type="button" className="secondary-button mt-3" onClick={() => onAddRule(category)}>ルールを追加</button>
               </fieldset>
-              {category === 'implementation' && <TechnologyRulesEditor rules={technologySpecificRules} onChange={onTechnologySpecificRulesChange} />}
+              {category === 'implementation' && <TechnologyRulesEditor rules={technologySpecificRules} sources={technologySpecificRuleSources} onChange={onTechnologySpecificRulesChange} />}
             </Fragment>
           )
         })}

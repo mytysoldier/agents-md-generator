@@ -69,6 +69,11 @@ function normalizeRuleGroup(value: unknown, requiredCategories: readonly RuleCat
   }
 }
 
+function normalizeTechnologyRuleSources(value: unknown, rules: string[]): Array<string | null> | undefined {
+  if (!Array.isArray(value)) return undefined
+  return rules.map((_, index) => typeof value[index] === 'string' ? normalizeSingleLine(value[index]) : null)
+}
+
 export function normalizeMinimumInput(value: unknown): MinimumInput {
   if (!isRecord(value)) {
     return { projectSummary: '', technologyStack: [], additionalConstraints: [] }
@@ -96,6 +101,8 @@ export function normalizeEditedDraft(
   const commonRuleGroups = Array.isArray(value.commonRuleGroups)
     ? value.commonRuleGroups.map((group) => normalizeRuleGroup(group, requiredCategories)).filter((group): group is RuleGroup => group !== null)
     : []
+  const technologySpecificRules = normalizeStringList(value.technologySpecificRules)
+  const technologySpecificRuleSources = normalizeTechnologyRuleSources(value.technologySpecificRuleSources, technologySpecificRules)
 
   return {
     kind: 'edited',
@@ -105,7 +112,8 @@ export function normalizeEditedDraft(
     commands,
     additionalConstraints: normalizeStringList(value.additionalConstraints),
     commonRuleGroups,
-    technologySpecificRules: normalizeStringList(value.technologySpecificRules),
+    technologySpecificRules,
+    ...(technologySpecificRuleSources ? { technologySpecificRuleSources } : {}),
   }
 }
 

@@ -21,7 +21,8 @@ function technologyRules(technologyStack: string[]): string[] {
 
 export function createGeneratedDraft(value: unknown): GeneratedDraft {
   const input: MinimumInput = normalizeMinimumInput(value)
-  return { kind: 'generated', title: DEFAULT_DOCUMENT_TITLE, projectSummary: input.projectSummary, technologyStack: input.technologyStack, commands: [], additionalConstraints: input.additionalConstraints, commonRuleGroups: createCommonRuleGroups(), technologySpecificRules: technologyRules(input.technologyStack) }
+  const technologySpecificRules = technologyRules(input.technologyStack)
+  return { kind: 'generated', title: DEFAULT_DOCUMENT_TITLE, projectSummary: input.projectSummary, technologyStack: input.technologyStack, commands: [], additionalConstraints: input.additionalConstraints, commonRuleGroups: createCommonRuleGroups(), technologySpecificRules, technologySpecificRuleSources: [...technologySpecificRules] }
 }
 
 export function suggestCommandLabel(command: unknown): string {
