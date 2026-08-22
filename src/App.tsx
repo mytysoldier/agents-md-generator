@@ -19,7 +19,9 @@ function reconcileTechnologyRules(savedDraft: EditedDraft, nextDraft: EditedDraf
     const source = nextSources[index] ?? rule
     return removedSources.includes(source) ? [] : [{ rule: savedRulesBySource.get(source) ?? rule, source }]
   })
-  const customRules = savedDraft.technologySpecificRules.flatMap((rule, index) => savedSources[index] === null ? [{ rule, source: null }] : [])
+  const customRules = generatedRules.length > 0
+    ? savedDraft.technologySpecificRules.flatMap((rule, index) => savedSources[index] === null ? [{ rule, source: null }] : [])
+    : []
   const rules = [...generatedRules, ...customRules]
 
   return {

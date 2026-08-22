@@ -311,4 +311,23 @@ describe('アプリケーション', () => {
     expect((screen.getByLabelText('技術固有ルール 1') as HTMLInputElement).value).toContain('strict設定を維持し')
     expect((screen.getByLabelText('技術固有ルール 2') as HTMLInputElement).value).toContain('既存のコンポーネント構成')
   })
+
+  it('一致する技術プロファイルがなくなった場合は手動追加ルールを表示しない', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.change(screen.getByLabelText('技術スタック'), { target: { value: 'TypeScript' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    fireEvent.click(screen.getAllByRole('button', { name: 'ルールを追加' })[1])
+    fireEvent.change(screen.getByLabelText('技術固有ルール 2'), { target: { value: '独自ルール' } })
+    fireEvent.click(screen.getByRole('button', { name: '最小入力に戻る' }))
+    fireEvent.change(screen.getByLabelText('技術スタック'), { target: { value: 'Unknown' } })
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Assert
+    expect(screen.queryByRole('heading', { name: '技術固有ルール' })).not.toBeInTheDocument()
+    expect(screen.queryByDisplayValue('独自ルール')).not.toBeInTheDocument()
+  })
 })
