@@ -8,7 +8,9 @@ interface CommandsEditorProps {
 }
 
 export function CommandsEditor({ commands, onChange }: CommandsEditorProps) {
-  const [manualLabelIndexes, setManualLabelIndexes] = useState<Set<number>>(new Set())
+  const [manualLabelIndexes, setManualLabelIndexes] = useState<Set<number>>(() => new Set(
+    commands.flatMap((command, index) => command.label === suggestCommandLabel(command.command) ? [] : [index]),
+  ))
 
   function updateCommand(index: number, command: string) {
     onChange(commands.map((item, itemIndex) => itemIndex === index

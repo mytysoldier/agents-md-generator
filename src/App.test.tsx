@@ -143,6 +143,7 @@ describe('アプリケーション', () => {
     fireEvent.change(screen.getByLabelText('文書タイトル'), { target: { value: 'CUSTOM.md' } })
     fireEvent.click(screen.getByRole('button', { name: 'コマンドを追加' }))
     fireEvent.change(screen.getByLabelText('コマンド 1'), { target: { value: 'pnpm test' } })
+    fireEvent.change(screen.getByLabelText('用途ラベル 1'), { target: { value: '単体テスト' } })
 
     // Act
     fireEvent.click(screen.getByRole('button', { name: '最小入力に戻る' }))
@@ -154,6 +155,8 @@ describe('アプリケーション', () => {
     fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
     expect(screen.getByLabelText('文書タイトル')).toHaveValue('CUSTOM.md')
     expect(screen.getByLabelText('コマンド 1')).toHaveValue('pnpm test')
+    fireEvent.change(screen.getByLabelText('コマンド 1'), { target: { value: 'pnpm test --watch' } })
+    expect(screen.getByLabelText('用途ラベル 1')).toHaveValue('単体テスト')
   })
 
   it('空の追加ルールがあっても最後の有効ルールを空にしない', () => {
