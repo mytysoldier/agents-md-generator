@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title description">
+  <title id="title">AGENTS.mdジェネレーター</title>
+  <desc id="description">プロジェクトのルールを、すぐ使えるAGENTS.mdへ。</desc>
+  <defs>
+    <linearGradient id="background" x1="80" y1="40" x2="1120" y2="590" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#eef2ff" />
+      <stop offset="0.55" stop-color="#f5f3ff" />
+      <stop offset="1" stop-color="#ecfeff" />
+    </linearGradient>
+    <linearGradient id="accent" x1="775" y1="110" x2="1040" y2="525" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4f46e5" />
+      <stop offset="1" stop-color="#7c3aed" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#312e81" flood-opacity="0.18" />
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#background)" />
+  <circle cx="108" cy="84" r="150" fill="#c7d2fe" opacity="0.5" />
+  <circle cx="1102" cy="568" r="210" fill="#a5f3fc" opacity="0.45" />
+  <g transform="translate(84 118)">
+    <rect width="118" height="118" rx="28" fill="url(#accent)" />
+    <path d="M36 26h38l16 16v52H36z" fill="#fff" />
+    <path d="M74 26v18h16" fill="#c7d2fe" />
+    <path d="m53 56-10 10 10 10M70 56l10 10-10 10" fill="none" stroke="#4f46e5" stroke-linecap="round" stroke-linejoin="round" stroke-width="6" />
+  </g>
+  <text x="84" y="300" fill="#111827" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="66" font-weight="800" letter-spacing="-2">AGENTS.mdジェネレーター</text>
+  <text x="88" y="373" fill="#4b5563" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="32" font-weight="600">プロジェクトのルールを、</text>
+  <text x="88" y="421" fill="#4b5563" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="32" font-weight="600">すぐ使えるAGENTS.mdへ。</text>
+  <g filter="url(#shadow)" transform="translate(800 92)">
+    <rect width="300" height="446" rx="24" fill="#fff" />
+    <rect x="34" y="42" width="168" height="20" rx="10" fill="#4f46e5" />
+    <rect x="34" y="91" width="232" height="12" rx="6" fill="#c7d2fe" />
+    <rect x="34" y="119" width="201" height="12" rx="6" fill="#e0e7ff" />
+    <rect x="34" y="165" width="128" height="17" rx="8" fill="#111827" />
+    <rect x="34" y="205" width="232" height="10" rx="5" fill="#d1d5db" />
+    <rect x="34" y="230" width="219" height="10" rx="5" fill="#d1d5db" />
+    <rect x="34" y="255" width="228" height="10" rx="5" fill="#d1d5db" />
+    <rect x="34" y="301" width="148" height="17" rx="8" fill="#111827" />
+    <rect x="34" y="341" width="221" height="10" rx="5" fill="#d1d5db" />
+    <rect x="34" y="366" width="202" height="10" rx="5" fill="#d1d5db" />
+    <circle cx="255" cy="58" r="20" fill="#ede9fe" />
+    <path d="m247 58 6 6 11-13" fill="none" stroke="#7c3aed" stroke-linecap="round" stroke-linejoin="round" stroke-width="4" />
+  </g>
+</svg>

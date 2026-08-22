@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">AGENTS.mdジェネレーター</title>
+  <defs>
+    <linearGradient id="background" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4f46e5" />
+      <stop offset="1" stop-color="#7c3aed" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#background)" />
+  <path d="M19 14h20l8 8v28H19z" fill="#fff" />
+  <path d="M39 14v9h8" fill="#c7d2fe" />
+  <path d="m29 29-5 5 5 5M37 29l5 5-5 5" fill="none" stroke="#4f46e5" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" />
+</svg>
