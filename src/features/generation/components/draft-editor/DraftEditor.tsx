@@ -65,7 +65,8 @@ export function DraftEditor({ draft: initialDraft, onBack }: DraftEditorProps) {
           onRemoveRule={removeRule}
           technologySpecificRules={draft.technologySpecificRules}
           technologySpecificRuleSources={draft.technologySpecificRuleSources ?? draft.technologySpecificRules}
-          onTechnologySpecificRulesChange={(technologySpecificRules, technologySpecificRuleSources) => setDraft((current) => ({ ...current, technologySpecificRules, technologySpecificRuleSources }))}
+          removedTechnologySpecificRuleSources={draft.removedTechnologySpecificRuleSources ?? []}
+          onTechnologySpecificRulesChange={(technologySpecificRules, technologySpecificRuleSources, removedTechnologySpecificRuleSources) => setDraft((current) => ({ ...current, technologySpecificRules, technologySpecificRuleSources, removedTechnologySpecificRuleSources }))}
         />
       </div>
       <div className="mt-10 flex flex-wrap gap-3 border-t border-slate-200 pt-6">

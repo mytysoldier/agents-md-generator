@@ -103,6 +103,7 @@ export function normalizeEditedDraft(
     : []
   const technologySpecificRules = normalizeStringList(value.technologySpecificRules)
   const technologySpecificRuleSources = normalizeTechnologyRuleSources(value.technologySpecificRuleSources, technologySpecificRules)
+  const removedTechnologySpecificRuleSources = normalizeStringList(value.removedTechnologySpecificRuleSources)
 
   return {
     kind: 'edited',
@@ -114,6 +115,7 @@ export function normalizeEditedDraft(
     commonRuleGroups,
     technologySpecificRules,
     ...(technologySpecificRuleSources ? { technologySpecificRuleSources } : {}),
+    ...(removedTechnologySpecificRuleSources.length > 0 ? { removedTechnologySpecificRuleSources } : {}),
   }
 }
 

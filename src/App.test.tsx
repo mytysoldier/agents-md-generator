@@ -255,4 +255,26 @@ describe('アプリケーション', () => {
     expect(screen.getByLabelText('技術固有ルール 1')).toHaveValue('Reactの設計を維持する。')
     expect(screen.queryByLabelText('技術固有ルール 2')).not.toBeInTheDocument()
   })
+
+  it('削除した技術固有ルールを技術スタック変更後に復活させない', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.change(screen.getByLabelText('技術スタック'), { target: { value: 'TypeScript\nReact' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    const firstTechnologyRule = screen.getByLabelText('技術固有ルール 1')
+    const removeButton = firstTechnologyRule.parentElement?.querySelector('button')
+    if (!removeButton) throw new Error('削除ボタンが見つかりません。')
+    fireEvent.click(removeButton)
+    fireEvent.click(screen.getByRole('button', { name: '最小入力に戻る' }))
+    fireEvent.change(screen.getByLabelText('技術スタック'), { target: { value: 'TypeScript\nReact\nVue' } })
+
+    // Act
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+
+    // Assert
+    expect((screen.getByLabelText('技術固有ルール 1') as HTMLInputElement).value).toContain('既存のコンポーネント構成')
+    expect((screen.getByLabelText('技術固有ルール 2') as HTMLInputElement).value).toContain('Composition API')
+    expect(screen.queryByDisplayValue(expect.stringContaining('strict設定を維持し'))).not.toBeInTheDocument()
+  })
 })

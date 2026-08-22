@@ -11,9 +11,10 @@ function hasSameItems(left: string[], right: string[]): boolean {
   return left.length === right.length && left.every((item, index) => item === right[index])
 }
 
-function reconcileTechnologyRules(savedDraft: EditedDraft, nextDraft: EditedDraft): Pick<EditedDraft, 'technologySpecificRules' | 'technologySpecificRuleSources'> {
+function reconcileTechnologyRules(savedDraft: EditedDraft, nextDraft: EditedDraft): Pick<EditedDraft, 'technologySpecificRules' | 'technologySpecificRuleSources' | 'removedTechnologySpecificRuleSources'> {
   const savedSources = savedDraft.technologySpecificRuleSources ?? createGeneratedDraft(savedDraft).technologySpecificRules
   const nextSources = nextDraft.technologySpecificRuleSources ?? nextDraft.technologySpecificRules
+  const removedSources = savedDraft.removedTechnologySpecificRuleSources ?? []
   const retainedRules = savedDraft.technologySpecificRules.flatMap((rule, index) => {
     const source = savedSources[index] ?? null
     return source === null || nextSources.includes(source) ? [{ rule, source }] : []
@@ -21,13 +22,14 @@ function reconcileTechnologyRules(savedDraft: EditedDraft, nextDraft: EditedDraf
   const retainedSources = new Set(retainedRules.map(({ source }) => source).filter((source): source is string => source !== null))
   const newRules = nextDraft.technologySpecificRules.flatMap((rule, index) => {
     const source = nextSources[index] ?? rule
-    return retainedSources.has(source) ? [] : [{ rule, source }]
+    return retainedSources.has(source) || removedSources.includes(source) ? [] : [{ rule, source }]
   })
   const rules = [...retainedRules, ...newRules]
 
   return {
     technologySpecificRules: rules.map(({ rule }) => rule),
     technologySpecificRuleSources: rules.map(({ source }) => source),
+    removedTechnologySpecificRuleSources: removedSources,
   }
 }
 
