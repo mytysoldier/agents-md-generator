@@ -33,10 +33,12 @@ describe('アプリケーション', () => {
   it('編集画面の必須入力と最終生成操作はラベル付きで利用できる', () => {
     // Arrange
     render(<App />)
+
+    // Act
     fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
     fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
 
-    // Act / Assert
+    // Assert
     expect(screen.getByRole('textbox', { name: /プロジェクトの目的\s*必須/ })).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: '文書タイトル' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'AGENTS.mdを生成する' })).toBeInTheDocument()
@@ -46,9 +48,13 @@ describe('アプリケーション', () => {
     // Arrange
     render(<App />)
 
-    // Act / Assert
-    expect(screen.getByRole('textbox', { name: /プロジェクト概要\s*必須/ })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'たたき台を作成する' })).toBeInTheDocument()
+    // Act
+    const projectSummary = screen.getByRole('textbox', { name: /プロジェクト概要\s*必須/ })
+    const createDraftButton = screen.getByRole('button', { name: 'たたき台を作成する' })
+
+    // Assert
+    expect(projectSummary).toBeInTheDocument()
+    expect(createDraftButton).toBeInTheDocument()
   })
 
   it('最終生成で例外が起きてもクラッシュせず、エラーを表示する', () => {
