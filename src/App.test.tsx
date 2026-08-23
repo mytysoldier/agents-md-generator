@@ -69,6 +69,17 @@ describe('アプリケーション', () => {
     expect(targetUserDescription).toBeInTheDocument()
   })
 
+  it('入力開始前にプライバシーの要点を表示する', () => {
+    // Arrange
+    render(<App />)
+
+    // Act
+    const privacyNotice = screen.getByRole('note')
+
+    // Assert
+    expect(privacyNotice).toHaveTextContent('入力内容はこのブラウザ内だけで扱われ、外部へ送信・保存されません。')
+  })
+
   it('プロジェクト概要にプレースホルダーで入力例を表示する', () => {
     // Arrange
     render(<App />)
