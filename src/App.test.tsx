@@ -78,6 +78,8 @@ describe('アプリケーション', () => {
 
     // Assert
     expect(additionalConstraints).toBeInTheDocument()
+    expect(screen.getByLabelText('技術スタック')).toHaveAttribute('placeholder', '例: TypeScript\nReact')
+    expect(additionalConstraints).toHaveAttribute('placeholder', '例: 秘密情報をコミットしない\n変更後はテストを実行する')
     expect(screen.getByText('任意・1行に1項目。例: 秘密情報をコミットしない、変更後はテストを実行する')).toBeInTheDocument()
   })
 
