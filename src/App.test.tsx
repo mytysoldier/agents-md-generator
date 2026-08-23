@@ -58,6 +58,17 @@ describe('アプリケーション', () => {
     expect(createDraftButton).toBeInTheDocument()
   })
 
+  it('プロジェクト概要にプレースホルダーで入力例を表示する', () => {
+    // Arrange
+    render(<App />)
+
+    // Act
+    const projectSummary = screen.getByLabelText('プロジェクト概要必須')
+
+    // Assert
+    expect(projectSummary).toHaveAttribute('placeholder', '例: 個人開発者がタスクを登録・整理し、日々の作業を管理できるWebアプリ')
+  })
+
   it('追加の制約に1行ごとの具体的な入力例を表示する', () => {
     // Arrange
     render(<App />)
