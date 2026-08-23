@@ -55,7 +55,7 @@ export function MinimumInputForm({ initialValues, onCreateDraft }: MinimumInputF
           <Field id="technology-stack" label="技術スタック" hint="任意・1行に1項目。例: TypeScript、React">
             <textarea id="technology-stack" value={technologyStack} onChange={(event) => setTechnologyStack(event.target.value)} rows={3} className="field" />
           </Field>
-          <Field id="additional-constraints" label="追加で守ってほしいこと" hint="任意・1行に1項目。">
+          <Field id="additional-constraints" label="追加で守ってほしいこと" hint="任意・1行に1項目。例: 秘密情報をコミットしない、変更後はテストを実行する">
             <textarea id="additional-constraints" value={additionalConstraints} onChange={(event) => setAdditionalConstraints(event.target.value)} rows={3} className="field" />
           </Field>
           <button className="primary-button" type="submit">たたき台を作成する</button>

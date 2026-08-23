@@ -58,6 +58,18 @@ describe('アプリケーション', () => {
     expect(createDraftButton).toBeInTheDocument()
   })
 
+  it('追加の制約に1行ごとの具体的な入力例を表示する', () => {
+    // Arrange
+    render(<App />)
+
+    // Act
+    const additionalConstraints = screen.getByLabelText('追加で守ってほしいこと')
+
+    // Assert
+    expect(additionalConstraints).toBeInTheDocument()
+    expect(screen.getByText('任意・1行に1項目。例: 秘密情報をコミットしない、変更後はテストを実行する')).toBeInTheDocument()
+  })
+
   it('最小入力画面から利用上の注意とプライバシーを確認できる', () => {
     // Arrange
     render(<App />)
