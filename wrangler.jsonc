@@ -1,5 +1,5 @@
 {
-  "name": "mytysoldier-agents-md-generator",
+  "name": "agents-md-generator",
   "pages_build_output_dir": "./dist",
   "compatibility_date": "2026-08-22",
   "send_metrics": false

@@ -25,9 +25,9 @@ pnpm build
 
 ## 公開・デプロイ
 
-公開先はCloudflare Pagesの `mytysoldier-agents-md-generator` プロジェクトです。
+公開先はCloudflare Pagesの `agents-md-generator` プロジェクトです。
 
-- 本番URL: `https://mytysoldier-agents-md-generator.pages.dev/`
+- 本番URL: `https://agents-md-generator-4vr.pages.dev/`
 - Production branch: `main`
 - Build command: `pnpm build`
 - Build output directory: `dist`
@@ -40,16 +40,16 @@ Git連携を初めて設定する場合は、Cloudflare Dashboardの Workers & P
 
 ```bash
 pnpm build
-pnpm dlx wrangler pages deploy dist --project-name mytysoldier-agents-md-generator --branch main
+pnpm dlx wrangler pages deploy dist --project-name agents-md-generator --branch main
 ```
 
 ### 公開後の確認
 
 ```bash
-curl --fail --show-error --location https://mytysoldier-agents-md-generator.pages.dev/
-curl --fail --show-error https://mytysoldier-agents-md-generator.pages.dev/robots.txt
-curl --fail --show-error https://mytysoldier-agents-md-generator.pages.dev/sitemap.xml
-curl --fail-with-body --show-error https://mytysoldier-agents-md-generator.pages.dev/not-found
+curl --fail --show-error --location https://agents-md-generator-4vr.pages.dev/
+curl --fail --show-error https://agents-md-generator-4vr.pages.dev/robots.txt
+curl --fail --show-error https://agents-md-generator-4vr.pages.dev/sitemap.xml
+curl --fail-with-body --show-error https://agents-md-generator-4vr.pages.dev/not-found
 ```
 
 最後のコマンドは404を正常として確認するため、終了コードが22になることを確認します。ブラウザではトップページの直接アクセスと再読み込み、主要フロー、スマートフォン表示、OGP画像も確認します。
