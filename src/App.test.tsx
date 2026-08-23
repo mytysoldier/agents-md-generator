@@ -142,7 +142,7 @@ describe('アプリケーション', () => {
     expect(screen.getByRole('heading', { name: '必要な詳細だけを整えてください' })).toBeInTheDocument()
   })
 
-  it('編集画面でプロジェクトの目的を空にしない', () => {
+  it('編集画面でプロジェクトの目的を空にしても値をクリアでき、必須エラーを表示する', () => {
     // Arrange
     render(<App />)
     fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
@@ -153,7 +153,7 @@ describe('アプリケーション', () => {
 
     // Assert
     expect(screen.getByRole('alert')).toHaveTextContent('プロジェクトの目的を入力してください。')
-    expect(screen.getByLabelText('プロジェクトの目的必須')).toHaveValue('Webアプリ')
+    expect(screen.getByLabelText('プロジェクトの目的必須')).toHaveValue('  \n ')
   })
   it('補完ルールを編集し、コマンドを追加して削除できる', () => {
     // Arrange

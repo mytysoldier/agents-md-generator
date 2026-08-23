@@ -16,9 +16,9 @@ export function DocumentDetails({ draft, onChange, titleRef, projectSummaryRef }
   function updateProjectSummary(value: string) {
     if (!value.trim()) {
       setProjectSummaryError('プロジェクトの目的を入力してください。')
-      return
+    } else {
+      setProjectSummaryError('')
     }
-    setProjectSummaryError('')
     onChange((current) => ({ ...current, projectSummary: value }))
   }
 
