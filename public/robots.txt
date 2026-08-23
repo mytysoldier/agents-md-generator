@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mytysoldier-agents-md-generator.pages.dev/sitemap.xml
+Sitemap: https://agents-md-generator-4vr.pages.dev/sitemap.xml

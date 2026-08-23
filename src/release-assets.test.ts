@@ -7,14 +7,16 @@ describe('公開アセット', () => {
   it('トップページに検索結果と共有表示に必要なメタデータが設定されている', () => {
     // Arrange
     const html = readProjectFile('index.html')
+    const productionUrl = 'https://agents-md-generator-4vr.pages.dev/'
 
     // Act
     const metadata = {
-      canonical: html.includes('rel="canonical"'),
+      canonical: html.includes(`rel="canonical" href="${productionUrl}"`),
       description: html.includes('name="description"'),
       openGraphTitle: html.includes('property="og:title"'),
-      openGraphImage: html.includes('property="og:image"'),
+      openGraphImage: html.includes(`property="og:image" content="${productionUrl}og-image.png"`),
       twitterCard: html.includes('name="twitter:card"'),
+      twitterImage: html.includes(`name="twitter:image" content="${productionUrl}og-image.png"`),
       favicon: html.includes('rel="icon"'),
     }
 
@@ -25,6 +27,7 @@ describe('公開アセット', () => {
       openGraphTitle: true,
       openGraphImage: true,
       twitterCard: true,
+      twitterImage: true,
       favicon: true,
     })
   })
@@ -33,7 +36,7 @@ describe('公開アセット', () => {
     // Arrange
     const robots = readProjectFile('public/robots.txt')
     const sitemap = readProjectFile('public/sitemap.xml')
-    const productionUrl = 'https://mytysoldier-agents-md-generator.pages.dev/'
+    const productionUrl = 'https://agents-md-generator-4vr.pages.dev/'
 
     // Act
     const crawlerConfiguration = {
@@ -84,7 +87,7 @@ describe('公開アセット', () => {
 
     // Assert
     expect(deploymentConfiguration).toEqual({
-      projectName: 'mytysoldier-agents-md-generator',
+      projectName: 'agents-md-generator',
       buildOutputDirectory: './dist',
     })
   })
