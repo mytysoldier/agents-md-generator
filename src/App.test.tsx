@@ -58,6 +58,17 @@ describe('アプリケーション', () => {
     expect(createDraftButton).toBeInTheDocument()
   })
 
+  it('トップページで対象ユーザーを明示する', () => {
+    // Arrange
+    render(<App />)
+
+    // Act
+    const targetUserDescription = screen.getByText(/AIコーディングエージェントと開発を進めるソフトウェア開発者向け/)
+
+    // Assert
+    expect(targetUserDescription).toBeInTheDocument()
+  })
+
   it('プロジェクト概要にプレースホルダーで入力例を表示する', () => {
     // Arrange
     render(<App />)
