@@ -6,11 +6,12 @@ import { Field } from '../form/Field'
 interface DocumentDetailsProps {
   draft: EditedDraft
   onChange: React.Dispatch<React.SetStateAction<EditedDraft>>
+  onValidProjectSummaryChange: () => void
   titleRef: React.RefObject<HTMLInputElement | null>
   projectSummaryRef: React.RefObject<HTMLTextAreaElement | null>
 }
 
-export function DocumentDetails({ draft, onChange, titleRef, projectSummaryRef }: DocumentDetailsProps) {
+export function DocumentDetails({ draft, onChange, onValidProjectSummaryChange, titleRef, projectSummaryRef }: DocumentDetailsProps) {
   const [projectSummaryError, setProjectSummaryError] = useState('')
 
   function updateProjectSummary(value: string) {
@@ -18,6 +19,7 @@ export function DocumentDetails({ draft, onChange, titleRef, projectSummaryRef }
       setProjectSummaryError('プロジェクトの目的を入力してください。')
     } else {
       setProjectSummaryError('')
+      onValidProjectSummaryChange()
     }
     onChange((current) => ({ ...current, projectSummary: value }))
   }

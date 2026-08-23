@@ -155,6 +155,23 @@ describe('アプリケーション', () => {
     expect(screen.getByRole('alert')).toHaveTextContent('プロジェクトの目的を入力してください。')
     expect(screen.getByLabelText('プロジェクトの目的必須')).toHaveValue('  \n ')
   })
+
+  it('空のプロジェクトの目的を再入力すると生成時の必須エラーを消す', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    const projectSummary = screen.getByLabelText('プロジェクトの目的必須')
+    fireEvent.change(projectSummary, { target: { value: '' } })
+    fireEvent.click(screen.getByRole('button', { name: 'AGENTS.mdを生成する' }))
+
+    // Act
+    fireEvent.change(projectSummary, { target: { value: '入力し直した目的' } })
+
+    // Assert
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
   it('補完ルールを編集し、コマンドを追加して削除できる', () => {
     // Arrange
     render(<App />)

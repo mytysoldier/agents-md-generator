@@ -83,7 +83,13 @@ export function DraftEditor({ draft: initialDraft, onBack, onGenerate }: DraftEd
         <p className="leading-7 text-slate-600">「アプリが補完した内容」と「あなたの入力内容」を区別して表示しています。編集した内容が次の最終出力の根拠になります。</p>
       </header>
       <div className="mt-8 space-y-8">
-        <DocumentDetails draft={draft} onChange={setDraft} titleRef={titleRef} projectSummaryRef={projectSummaryRef} />
+        <DocumentDetails
+          draft={draft}
+          onChange={setDraft}
+          onValidProjectSummaryChange={() => setGenerationError((current) => current === 'プロジェクトの目的を入力してください。' ? '' : current)}
+          titleRef={titleRef}
+          projectSummaryRef={projectSummaryRef}
+        />
         <ProjectDetails draft={draft} onChange={setDraft} />
         <CommandsEditor commands={draft.commands} onChange={(commands) => setDraft((current) => ({ ...current, commands }))} />
         <CommonRulesEditor
