@@ -58,6 +58,29 @@ describe('アプリケーション', () => {
     expect(createDraftButton).toBeInTheDocument()
   })
 
+  it('プロジェクト概要にプレースホルダーで入力例を表示する', () => {
+    // Arrange
+    render(<App />)
+
+    // Act
+    const projectSummary = screen.getByLabelText('プロジェクト概要必須')
+
+    // Assert
+    expect(projectSummary).toHaveAttribute('placeholder', '例: 個人開発者がタスクを登録・整理し、日々の作業を管理できるWebアプリ')
+  })
+
+  it('追加の制約に1行ごとの具体的な入力例を表示する', () => {
+    // Arrange
+    render(<App />)
+
+    // Act
+    const additionalConstraints = screen.getByLabelText('追加で守ってほしいこと')
+
+    // Assert
+    expect(additionalConstraints).toBeInTheDocument()
+    expect(screen.getByText('任意・1行に1項目。例: 秘密情報をコミットしない、変更後はテストを実行する')).toBeInTheDocument()
+  })
+
   it('最小入力画面から利用上の注意とプライバシーを確認できる', () => {
     // Arrange
     render(<App />)
@@ -119,7 +142,7 @@ describe('アプリケーション', () => {
     expect(screen.getByRole('heading', { name: '必要な詳細だけを整えてください' })).toBeInTheDocument()
   })
 
-  it('編集画面でプロジェクトの目的を空にしない', () => {
+  it('編集画面でプロジェクトの目的を空にしても値をクリアでき、必須エラーを表示する', () => {
     // Arrange
     render(<App />)
     fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
@@ -130,8 +153,25 @@ describe('アプリケーション', () => {
 
     // Assert
     expect(screen.getByRole('alert')).toHaveTextContent('プロジェクトの目的を入力してください。')
-    expect(screen.getByLabelText('プロジェクトの目的必須')).toHaveValue('Webアプリ')
+    expect(screen.getByLabelText('プロジェクトの目的必須')).toHaveValue('  \n ')
   })
+
+  it('空のプロジェクトの目的を再入力すると生成時の必須エラーを消す', () => {
+    // Arrange
+    render(<App />)
+    fireEvent.change(screen.getByLabelText('プロジェクト概要必須'), { target: { value: 'Webアプリ' } })
+    fireEvent.click(screen.getByRole('button', { name: 'たたき台を作成する' }))
+    const projectSummary = screen.getByLabelText('プロジェクトの目的必須')
+    fireEvent.change(projectSummary, { target: { value: '' } })
+    fireEvent.click(screen.getByRole('button', { name: 'AGENTS.mdを生成する' }))
+
+    // Act
+    fireEvent.change(projectSummary, { target: { value: '入力し直した目的' } })
+
+    // Assert
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
   it('補完ルールを編集し、コマンドを追加して削除できる', () => {
     // Arrange
     render(<App />)

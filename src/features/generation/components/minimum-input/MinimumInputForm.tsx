@@ -49,13 +49,13 @@ export function MinimumInputForm({ initialValues, onCreateDraft }: MinimumInputF
         <p className="mt-2 leading-7 text-slate-600">プロジェクト概要だけが必須です。コマンドなどの詳細は、次の画面で必要なものだけ追加できます。</p>
         <form className="mt-6 space-y-6" onSubmit={(event) => { event.preventDefault(); createDraft() }}>
           <Field id="project-summary" label="プロジェクト概要" required hint="対象ユーザー、解決する課題、提供するものを自由に入力してください。">
-            <textarea ref={projectSummaryRef} id="project-summary" required value={projectSummary} onChange={(event) => { setProjectSummary(event.target.value); setProjectSummaryError('') }} rows={5} className="field" aria-invalid={Boolean(projectSummaryError)} aria-describedby={projectSummaryError ? 'project-summary-error' : undefined} />
+            <textarea ref={projectSummaryRef} id="project-summary" required value={projectSummary} onChange={(event) => { setProjectSummary(event.target.value); setProjectSummaryError('') }} rows={5} className="field" placeholder="例: 個人開発者がタスクを登録・整理し、日々の作業を管理できるWebアプリ" aria-invalid={Boolean(projectSummaryError)} aria-describedby={projectSummaryError ? 'project-summary-error' : undefined} />
           </Field>
           {projectSummaryError && <p id="project-summary-error" className="text-sm text-rose-700" role="alert">{projectSummaryError}</p>}
           <Field id="technology-stack" label="技術スタック" hint="任意・1行に1項目。例: TypeScript、React">
             <textarea id="technology-stack" value={technologyStack} onChange={(event) => setTechnologyStack(event.target.value)} rows={3} className="field" />
           </Field>
-          <Field id="additional-constraints" label="追加で守ってほしいこと" hint="任意・1行に1項目。">
+          <Field id="additional-constraints" label="追加で守ってほしいこと" hint="任意・1行に1項目。例: 秘密情報をコミットしない、変更後はテストを実行する">
             <textarea id="additional-constraints" value={additionalConstraints} onChange={(event) => setAdditionalConstraints(event.target.value)} rows={3} className="field" />
           </Field>
           <button className="primary-button" type="submit">たたき台を作成する</button>
