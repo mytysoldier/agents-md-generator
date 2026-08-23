@@ -42,7 +42,7 @@ export function MinimumInputForm({ initialValues, onCreateDraft }: MinimumInputF
       <header className="space-y-5">
         <p className="text-sm font-semibold tracking-wide text-indigo-700">AGENTS.md GENERATOR</p>
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">プロジェクト用のAGENTS.mdを、迷わず作る。</h1>
-        <p className="max-w-2xl text-lg leading-8 text-slate-600">概要だけから安全なたたき台を作り、必要な詳細だけを編集できます。入力内容はブラウザの外へ送信・保存しません。</p>
+        <p className="max-w-2xl text-lg leading-8 text-slate-600">AIコーディングエージェントと開発を進めるソフトウェア開発者向けのツールです。概要だけから安全なたたき台を作り、必要な詳細だけを編集できます。入力内容はブラウザの外へ送信・保存しません。</p>
       </header>
       <section className="mt-12 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8" aria-labelledby="minimum-input-title">
         <h2 id="minimum-input-title" className="text-xl font-bold">まず、プロジェクトについて教えてください</h2>
