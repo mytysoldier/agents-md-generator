@@ -1,6 +1,15 @@
-# ai-dev-template
+# AGENTS.mdジェネレーター
 
-AIエージェントを中心に、GitHub Issueでタスクを管理しながら個人開発を進めるためのテンプレートです。
+プロジェクト概要を入力し、たたき台を編集して、すぐ使える `AGENTS.md` を生成するWebアプリです。入力内容はブラウザ内だけで処理し、外部へ送信・保存しません。
+
+- 公開URL: <https://agents-md-generator-4vr.pages.dev/>
+
+## 使い方
+
+1. 公開URLを開き、プロジェクト概要を入力する
+2. 必要に応じて技術スタックと追加の制約を入力する
+3. たたき台を作成し、内容を編集する
+4. 最終プレビューからコピーまたはMarkdownをダウンロードする
 
 ## ローカル開発
 
@@ -58,7 +67,9 @@ curl --fail-with-body --show-error https://agents-md-generator-4vr.pages.dev/not
 
 Cloudflare Dashboardで対象プロジェクトの Deployments を開き、直前の正常なProductionデプロイを選んで `Rollback to this deployment` を実行します。復旧後は本番URLと主要フローを再確認し、原因となった変更は通常のPull Requestで修正します。履歴を書き換えるforce pushや、秘密情報のリポジトリ追加は行いません。
 
-このテンプレートは、以下のような進め方を前提にしています。
+## 開発の進め方
+
+このリポジトリでは、以下のような進め方を前提にしています。
 
 - まず企画・要件・技術設計をIssueで整理する
 - 初期リリースで作ること、作らないことを明確にする
@@ -67,14 +78,12 @@ Cloudflare Dashboardで対象プロジェクトの Deployments を開き、直�
 - 実装後は検証、コミット、push、PR作成まで進める
 - レビューコメント対応後は再レビューを依頼する
 
-## 使い方
+## 機能追加・変更時の進め方
 
-1. このリポジトリをテンプレートとして新しいリポジトリを作成する
-2. `docs/planning-template.md` をコピーして、作りたいサービスの初期リリース計画を書く
-3. `.github/ISSUE_TEMPLATE/design.md` から設計Issueを作る
-4. 設計Issueで初期リリース範囲と技術方針を確定する
-5. `.github/ISSUE_TEMPLATE/implementation.md` から実装Issueを小さく作る
-6. AIエージェントにIssue単位で実装を依頼する
+1. 変更内容に応じて、`.github/ISSUE_TEMPLATE/` のテンプレートからIssueを作成する
+2. 設計Issueで範囲と技術方針を確定する
+3. 実装Issueを小さく分け、AIエージェントへIssue単位で依頼する
+4. 検証、レビュー、Pull Request作成を行う
 
 ## 推奨AI開発フロー
 
